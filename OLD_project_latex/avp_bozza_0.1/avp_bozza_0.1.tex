@@ -1,0 +1,116 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES & CONFIG
+%----------------------------------------------------------------------------------------
+
+%\documentclass[paper=a4, fontsize=11pt]{article} % A4 paper and 11pt font size
+\documentclass{article}
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{listings} % source code package
+
+%\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+%\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{AVP Project draft - 0.1}
+\author{Barbon - De Zotti - Moscardo}
+\date{June 24, 2014}
+
+\begin{document}
+\maketitle % Print the title
+\lstset{language=C}  
+
+%----------------------------------------------------------------------------------------
+%	EX 1
+%----------------------------------------------------------------------------------------
+
+\section{Aim of our project}
+\paragraph{}
+Vogliamo verificare se delle variabili dell'applicazione contengono dati sensibili, a seguito dell'uso di determinati metodi che in esse hanno salvato i loro risultati.\\ 
+Nota: utilizzeremo l'abbreviazione \lq\lq metodi sensibili\rq\rq\ per metodi che generano dati contenenti informazioni sensibili e \lq\lq dati sensibili\rq\rq\ per indicare i dati generati da metodi sensibili. Utilizzeremo il verbo \lq\lq esportare\rq\rq\ per indicare tutti i possibili metodi di salvataggio/esportazione di dati sensibili. \\
+La domanda principale diventa quindi: in un'applicazione che genera dati sensibili, sono questi dati esportati?
+
+
+%----------------------------------------------------------------------------------------
+
+\section{Solution Proposal}
+\paragraph{}
+Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Safeness Analysis\rq\rq. Quest'analisi determina le variabili che esportano dati sensibili ad ogni entry ed exit point di un nodo. Consideriamo l'insieme di valori formato da (x, x[...], n), dove x[...] \`e la catena formata da variabili usate nella definizione di x. La variabile x e la sua catena sono esportate e potenzialmente sensibili se:
+\begin{itemize}
+\item esiste un percorso p da n a m
+\item la variabile x \`e esportata e potenzialmente sensibile in n
+\item la variabile x non \`e mai ridefinita in p
+\end{itemize}
+
+Consideriamo quindi le operazioni che generano e killano l'informazione:\\
+\begin{align*}
+\begin{tabular}{  l l }
+	$ gen[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
+	& OR \\
+	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
+	& \\                  
+	$  kill[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
+    & OR \\ 
+    & $ chain\ of\ var\ x\ contains\ only\ variables\ that\ are\ not\ sensible\ \} $ \\
+\end{tabular}
+\end{align*}
+
+Definiamo ora: 
+\begin{itemize}
+\item direzione dell'analisi: backward
+\item confluence operator: unione, $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
+\item inizializzazione: insieme vuoto $ \emptyset $
+\end{itemize}
+
+Possiamo formalizzare le equazioni della Safeness Analysis:
+\begin{gather*}
+SA_\textrm{$exit$}(p)\ =\ 
+\begin{cases}
+\emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
+\cup\ \lbrace SA_\textrm{$entry$}(p)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
+\end{cases} \\ \\
+SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
+\end{gather*}
+% \SA_\textrm{$entry$}(\bar{i})(\Delta)=\sigma^{'}_{S^{'}}(\bar{i})(\sigma^{'}_S(\bar{i})(\Delta))
+
+Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.
+\section{Examples}
+\subsection{Example 1}
+\begin{lstlisting}[mathescape]
+x = mysensibledata();	$ ... $		
+...
+y = x + 1;		$ No\ kill\ $
+...	
+export(y);		$ \text{gen}:\ y\ $
+\end{lstlisting}
+
+Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
+
+\subsection{Example 2}
+\begin{lstlisting}[mathescape]
+x = 5;			
+...
+y = x + 1;	
+...	
+export(y);		
+\end{lstlisting}
+
+In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
+
+\section{Conclusioni}
+Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.
+Questa bozza prende in considerazione esempi in pseudocodice 'imperativo'. Tutto questo lavoro, se confermato, dovr\`a quindi essere rivisto per poter essere adattato al paradigma ad oggetti del linguaggio android (considerando quindi le relative problematiche).
+
+
+%----------------------------------------------------------------------------------------
+%	END OF DOCUMENT
+%----------------------------------------------------------------------------------------
+
+\end{document}
