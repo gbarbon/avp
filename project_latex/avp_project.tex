@@ -1,0 +1,272 @@
+% TEMPLATE for Usenix papers, specifically to meet requirements of
+%  USENIX '05
+% originally a template for producing IEEE-format articles using LaTeX.
+%   written by Matthew Ward, CS Department, Worcester Polytechnic Institute.
+% adapted by David Beazley for his excellent SWIG paper in Proceedings,
+%   Tcl 96
+% turned into a smartass generic template by De Clarke, with thanks to
+%   both the above pioneers
+% use at your own risk.  Complaints to /dev/null.
+% make it two column with no page numbering, default is 10 point
+
+% Munged by Fred Douglis <douglis@research.att.com> 10/97 to separate
+% the .sty file from the LaTeX source template, so that people can
+% more easily include the .sty file into an existing document.  Also
+% changed to more closely follow the style guidelines as represented
+% by the Word sample file. 
+
+% Note that since 2010, USENIX does not require endnotes. If you want
+% foot of page notes, don't include the endnotes package in the 
+% usepackage command, below.
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES & CONFIG
+%----------------------------------------------------------------------------------------
+
+%\documentclass[paper=a4, fontsize=11pt]{article} % A4 paper and 11pt font size
+\documentclass[letterpaper,twocolumn,10pt]{article}
+
+\usepackage{usenix,epsfig,endnotes}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+%\usepackage{listings} % source code package
+
+%\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+%\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+\title{\Large \bf Analisys and Verification of Program Project 2014}
+
+\author{
+{\rm Gianluca Barbon}\\
+gbarbon@dsi.unive.it
+\and
+{\rm Cristian De Zotti}\\
+cdezotti@dsi.unive.it
+\and
+{\rm Marco Moscardo}\\
+mmoscardo@dsi.unive.it
+}
+\date{July 1, 2014}
+\maketitle
+
+% Use the following at camera-ready time to suppress page numbers.
+% Comment it out when you first submit the paper for review.
+\thispagestyle{empty}
+
+
+\subsection*{Abstract}
+Your Abstract Text Goes Here.  Just a few facts.
+Whet our appetites.
+
+%----------------------------------------------------------------------------------------
+%	1. Aim of our project
+%----------------------------------------------------------------------------------------
+
+\section{Aim of our project}
+\paragraph{}
+Vogliamo verificare se delle variabili dell'applicazione contengono dati sensibili, a seguito dell'uso di determinati metodi che in esse hanno salvato i loro risultati.\\ 
+Nota: utilizzeremo l'abbreviazione \lq\lq metodi sensibili\rq\rq\ per metodi che generano dati contenenti informazioni sensibili e \lq\lq dati sensibili\rq\rq\ per indicare i dati generati da metodi sensibili. Utilizzeremo il verbo \lq\lq esportare\rq\rq\ per indicare tutti i possibili metodi di salvataggio/esportazione di dati sensibili. \\
+La domanda principale diventa quindi: in un'applicazione che genera dati sensibili, sono questi dati esportati? \\
+
+%----------------------------------------------------------------------------------------
+%	2. Solution proposal
+%----------------------------------------------------------------------------------------
+
+\section{Solution Proposal}
+\paragraph{}
+Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Safeness Analysis\rq\rq. Quest'analisi determina le variabili che esportano dati sensibili ad ogni entry ed exit point di un nodo. Consideriamo l'insieme di valori formato da (x, x[...], n), dove x[...] \`e la catena formata da variabili usate nella definizione di x. La variabile x e la sua catena sono esportate e potenzialmente sensibili se:
+\begin{itemize}
+\item esiste un percorso p da n a m
+\item la variabile x \`e esportata e potenzialmente sensibile in n
+\item la variabile x non \`e mai ridefinita in p
+\end{itemize}
+
+Consideriamo quindi le operazioni che generano e killano l'informazione:\\
+\begin{align*}
+\begin{tabular}{  l l }
+	$ gen[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
+	& OR \\
+	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
+	& \\                  
+	$  kill[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
+    & OR \\ 
+    & $ chain\ of\ var\ x\ contains\ only\ variables\ that\ are\ not\ sensible\ \} $ \\
+\end{tabular}
+\end{align*}
+
+Definiamo ora: 
+\begin{itemize}
+\item direzione dell'analisi: backward
+\item confluence operator: unione, $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
+\item inizializzazione: insieme vuoto $ \emptyset $
+\end{itemize}
+
+Possiamo formalizzare le equazioni della Safeness Analysis:
+\begin{gather*}
+SA_\textrm{$exit$}(p)\ =\ 
+\begin{cases}
+\emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
+\cup\ \lbrace SA_\textrm{$entry$}(p)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
+\end{cases} \\ \\
+SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
+\end{gather*}
+% \SA_\textrm{$entry$}(\bar{i})(\Delta)=\sigma^{'}_{S^{'}}(\bar{i})(\sigma^{'}_S(\bar{i})(\Delta))
+
+Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.\\
+Di seguito alcuni esempi.\\
+
+\subsection{Example 1}
+{\tt \small
+\begin{verbatim}
+x = mysensibledata();	$ ... $		
+...
+y = x + 1;		$ No\ kill\ $
+...	
+export(y);		$ \text{gen}:\ y\ $
+\end{verbatim}
+}
+
+Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
+
+\subsection{Example 2}
+{\tt \small
+\begin{verbatim}
+x = 5;			
+...
+y = x + 1;	
+...	
+export(y);		
+\end{verbatim}
+}
+
+In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
+
+\subsection{Conclusions}
+Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.
+Questa bozza prende in considerazione esempi in pseudocodice 'imperativo'. Tutto questo lavoro, se confermato, dovr\`a quindi essere rivisto per poter essere adattato al paradigma ad oggetti del linguaggio android (considerando quindi le relative problematiche). \\
+
+%----------------------------------------------------------------------------------------
+%	3. Next step: Safeness Analysis in Object Oriented programming language
+%----------------------------------------------------------------------------------------
+
+\section{Next step: Safeness Analysis in Object Oriented programming language}
+\paragraph{}
+The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first star from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
+(Notice: for correctness, we here redefine `sensibile' (sensibile) as `confidential', as the previous translation from Italian was not correct.)\\
+
+\subsection{Example 1}
+{\tt \small
+\begin{verbatim}
+...
+Text t	= new Text(confidentialText);
+...
+\end{verbatim}
+}
+But we also need to consider Text class: \\
+{\tt \small
+\begin{verbatim}
+class Text {
+	string s;	//class variable
+	
+	Text(string b) { 	//constructor
+		this.s = b;
+	}
+}
+\end{verbatim}
+}
+
+In this example it is easy to see that the object t contains confidential datas.\\
+
+\subsection{Example 2}
+{\tt \small
+\begin{verbatim}
+...
+Text t	= new Text("Hello!");
+...
+\end{verbatim}
+}
+We now consider Text class: \\
+{\tt \small
+\begin{verbatim}
+class Text {
+	string s;	//class variable
+	
+	Text(string b) { 	//constructor
+		string c	 = confidentialMethod();
+		this.s = b;
+		this.s = c + b;	//considering string concat allowed
+	}
+	
+	confidentialMethod(){ //method with confidential values
+		string confidentialVariable;		
+		...
+		return confidentialVariable;
+	}
+}
+\end{verbatim}
+}
+
+In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.\\
+
+\subsection{Example 3 (from example 1 of section 2)}
+{\tt \small
+\begin{verbatim}
+...
+CustomClass x = new CustomClass();
+...
+CustomClass y = x;
+...
+y.export();
+\end{verbatim}
+}
+
+The last example has been created following the first example of section 2 of this document. We first notice that we can have various possibilities when creating a new object:\\
+
+\begin{itemize}
+  \item constructor doesn't make use of confidential data
+  \item constructor USES confidential data
+  \item parameters used in the constructor invocation contain confidential data
+  \item \ldots
+\end{itemize}
+
+If we apply backward analysis to this example, we will have the following steps:
+
+\begin{enumerate}
+\item gen step for object y (with export method)
+\item x is added to the chain of y
+\item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
+\end{enumerate}
+
+Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE~\cite{Prefetching}.
+
+{\footnotesize \bibliographystyle{acm}
+\bibliography{biblio}
+}
+
+
+
+\theendnotes
+
+
+%----------------------------------------------------------------------------------------
+%	END OF DOCUMENT
+%----------------------------------------------------------------------------------------
+
+\end{document}
+
+
+
+
+
+
+
