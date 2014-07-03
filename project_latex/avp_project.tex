@@ -247,13 +247,13 @@ If we apply backward analysis to this example, we will have the following steps:
 \item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
 \end{enumerate}
 
-Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE~\cite{Prefetching}. \\
+Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
 
 %----------------------------------------------------------------------------------------
 %	4. CCFG: Class Control Flow Graph
 %----------------------------------------------------------------------------------------
 
-\section{CCFG: Class Control Flow Graph}
+\section{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \paragraph{}
 {\tt \small
 \begin{verbatim}
@@ -263,11 +263,15 @@ output: G a CCFG of C
 
 begin ConstructCCFG
 /* Step1: Construct the class call graph for the class */ 
-CustomClass x = new CustomClass();
-...
-CustomClass y = x;
-...
-y.export();
+
+/* Step2: Replace each call graph node with the corresponding Control Flow Graph */
+
+/* Step3: Connect every individual Control Flow Graph */ 
+
+/* Step4: Return the completed Class Control Flow Graph of G */ 
+
+end ConstructCCFG
+
 \end{verbatim}
 }
 
