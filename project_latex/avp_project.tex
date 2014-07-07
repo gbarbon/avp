@@ -30,7 +30,7 @@
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 \usepackage[english]{babel} % English language/hyphenation
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
-%\usepackage{listings} % source code package
+\usepackage{listings} % source code package
 
 %\usepackage{sectsty} % Allows customizing section commands
 %\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -94,11 +94,12 @@ Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Saf
 Consideriamo quindi le operazioni che generano e killano l'informazione:\\
 \begin{align*}
 \begin{tabular}{  l l }
-	$ gen[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
+	$ gen_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
 	& OR \\
-	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
+	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ $\\ 
+	& $ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
 	& \\                  
-	$  kill[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
+	$  kill_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
     & OR \\ 
     & $ chain\ of\ var\ x\ contains\ only\ variables\ that\ are\ not\ sensible\ \} $ \\
 \end{tabular}
@@ -116,7 +117,7 @@ Possiamo formalizzare le equazioni della Safeness Analysis:
 SA_\textrm{$exit$}(p)\ =\ 
 \begin{cases}
 \emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
-\cup\ \lbrace SA_\textrm{$entry$}(p)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
+\cup\ \lbrace SA_\textrm{$entry$}(q)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
 \end{cases} \\ \\
 SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
 \end{gather*}
@@ -161,7 +162,7 @@ Questa bozza prende in considerazione esempi in pseudocodice 'imperativo'. Tutto
 
 \section{Next step: Safeness Analysis in Object Oriented programming language}
 \paragraph{}
-The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first star from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
+The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
 (Notice: for correctness, we here redefine `sensibile' (sensibile) as `confidential', as the previous translation from Italian was not correct.)\\
 
 \subsection{Example 1}
@@ -173,17 +174,16 @@ Text t	= new Text(confidentialText);
 \end{verbatim}
 }
 But we also need to consider Text class: \\
-{\tt \small
+
 \begin{verbatim}
 class Text {
-	string s;	//class variable
+    string s;	//class variable
 	
-	Text(string b) { 	//constructor
-		this.s = b;
-	}
+    Text(string b) { 	//constructor
+        this.s = b;
+    }
 }
 \end{verbatim}
-}
 
 In this example it is easy to see that the object t contains confidential datas.\\
 
@@ -248,6 +248,46 @@ If we apply backward analysis to this example, we will have the following steps:
 \end{enumerate}
 
 Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
+
+\subsection{Formal redefinition of gen and kill}
+Let's consider operations that generate and kill information:
+\begin{align*}
+\begin{tabular}{  l l }
+	$ gen_{SA}[\text{B}]= $ & $ \{ variable\ is\ exported \} $\\ 
+	& \\                  
+	$  kill_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ confidential\ $ \\
+	& $ method \} $ \\
+\end{tabular}
+\end{align*}
+
+We define: 
+\begin{description}
+\item[\textbf{Analysis direction:}] backward
+\item[\textbf{Confluence operator: }] union\\ $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
+\item[\textbf{Initialization: }] empty set, \quad $ \emptyset $
+\end{description}
+
+Safeness Analysis equations:
+\begin{gather*}
+SA_\textrm{$exit$}(p)\ =\ 
+\begin{cases}
+\emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
+\cup\ \lbrace SA_\textrm{$entry$}(q)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
+\end{cases} \\ \\
+SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
+\end{gather*}
+
+Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. So we present the different cases in a more precise way.
+\begin{description}
+\item[\texttt{x.export()}] \hfill \\
+Element is exported with a method. In this case the \emph{gen} step will add the record $\{x\}$ in the table into the \emph{gen} column.
+\item[\texttt{x = y}] \hfill \\
+The element is referred from another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, y\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred element (\emph{y}) will remove the information added with this \emph{gen} step, and also the information related to the exportation of the first element (\emph{x}).
+\item[\texttt{CClass x = new CClass(y)}] \hfill \\
+The element is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y]\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred element (\emph{y}) will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first element (\emph{x}). This is because, even if \emph{y} element is \emph{SAFE}, the creator of the first one may make use of confidential information, and so we cannot trust the \emph{x} element. In order to check the safeness of the \emph{x} element, we must expand the \emph{CFG} of its constructor.
+\item[\texttt{CClass x = new CClass()}] \hfill \\
+The element \emph{x} is created. We cannot make any \emph{kill} step, because we don't know if the constructor of this element is \emph{SAFE}. As said for the previous case, we must expand and inspect its \emph{CFG}.
+\end{description}
 
 %----------------------------------------------------------------------------------------
 %	4. CCFG: Class Control Flow Graph
