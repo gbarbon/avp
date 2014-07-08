@@ -327,6 +327,7 @@ input: C a class
 output: G a CCFG of C
 
 begin ConstructCCFG
+	
 	/* Step1: Construct the class call 
 	graph for the class */ 
 	 G = Construct the class call graph of G
@@ -334,7 +335,8 @@ begin ConstructCCFG
 	/* Step2: Replace each call graph node 
 	with the corresponding CFG */
 	 foreach method M in C do
-	  Replace M node in G with CFG
+	  Add M class to C	  
+	  Replace M node in G with CFG of M class
 
 	/* Step3: Connect every individual 
 	CFG */
