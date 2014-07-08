@@ -101,7 +101,8 @@ Consideriamo quindi le operazioni che generano e killano l'informazione:\\
 	& \\                  
 	$  kill_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
     & OR \\ 
-    & $ chain\ of\ var\ x\ contains\ only\ variables\ that\ are\ not\ sensible\ \} $ \\
+    & $ chain\ of\ var\ x\ contains\ only\ variables\ $ \\
+    & $ that\ are\ not\ sensible\ \} $ \\
 \end{tabular}
 \end{align*}
 
@@ -218,7 +219,29 @@ class Text {
 \end{verbatim}
 }
 
-In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.\\
+In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.
+
+\begin{align*}
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & gen & kill  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\qquad
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & exit & entry  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\end{align*}
 
 \subsection{Example 3 (from example 1 of section 2)}
 {\tt \small
@@ -248,6 +271,28 @@ If we apply backward analysis to this example, we will have the following steps:
 \item x is added to the chain of y
 \item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
 \end{enumerate}
+
+\begin{align*}
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & gen & kill  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\qquad
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & exit & entry  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\end{align*}
 
 Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
 
