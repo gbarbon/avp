@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  8 JUL 2014 17:18
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  8 JUL 2014 18:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -471,50 +471,50 @@ Underfull \hbox (badness 10000) in paragraph at lines 199--201
  []
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 258--259
+Underfull \hbox (badness 10000) in paragraph at lines 255--256
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 297--298
+Underfull \hbox (badness 10000) in paragraph at lines 294--295
 
  []
 
 
-LaTeX Warning: Command \textbackslash invalid in math mode on input line 325.
+LaTeX Warning: Command \textbackslash invalid in math mode on input line 322.
 
 
-LaTeX Warning: Command \textbackslash invalid in math mode on input line 325.
+LaTeX Warning: Command \textbackslash invalid in math mode on input line 322.
 
 
-Overfull \hbox (11.72086pt too wide) in paragraph at lines 325--325
+Overfull \hbox (11.72086pt too wide) in paragraph at lines 322--322
 [] 
  []
 
 
-Underfull \hbox (badness 1365) in paragraph at lines 327--329
+Underfull \hbox (badness 1365) in paragraph at lines 324--326
 \T1/ptm/m/n/10 is im-por-tant to make a dis-tinc-tion be-tween ob-jects
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 327--329
+Underfull \hbox (badness 10000) in paragraph at lines 324--326
 
  []
 
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 333.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 330.
 [3]
-Overfull \hbox (12.24042pt too wide) in paragraph at lines 378--380
+Overfull \hbox (12.24042pt too wide) in paragraph at lines 375--377
 [][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (0.90308pt too wide) in paragraph at lines 380--381
+Overfull \hbox (0.90308pt too wide) in paragraph at lines 377--378
 [][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (17.90909pt too wide) in paragraph at lines 384--386
+Overfull \hbox (17.90909pt too wide) in paragraph at lines 381--383
 [][][][][][][][][][][][][][][][][][][][][][] 
  []
 
@@ -525,7 +525,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 Here is how much of TeX's memory you used:
  4320 strings out of 493315
  59256 string characters out of 6137904
- 139241 words of memory out of 5000000
+ 138241 words of memory out of 5000000
  7661 multiletter control sequences out of 15000+600000
  78558 words of font info for 131 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -541,7 +541,7 @@ fb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb
 ></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/loc
 al/texlive/2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive
 /2013/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (4 pages, 154364 bytes).
+Output written on avp_project.pdf (4 pages, 154523 bytes).
 PDF statistics:
  55 PDF objects out of 1000 (max. 8388607)
  39 compressed objects within 1 object stream
