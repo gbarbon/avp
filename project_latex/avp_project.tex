@@ -320,25 +320,34 @@ The object \emph{x} is created. We cannot make any \emph{kill} step, because we 
 
 \section{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \paragraph{}
-{\tt \small
-\begin{verbatim}
+\lstset{basicstyle=\small\ttfamily, tabsize=2}
+\begin{lstlisting}
 algorithm: ConstructorCCFG(C):G
 input: C a class
 output: G a CCFG of C
 
 begin ConstructCCFG
-/* Step1: Construct the class call graph for the class */ 
+	/* Step1: Construct the class call 
+	graph for the class */ 
+	 G = Construct the class call graph of G
+	  
+	/* Step2: Replace each call graph node 
+	with the corresponding CFG */
+	 foreach node N in C do
+	  Replace N node in G with CFG
 
-/* Step2: Replace each call graph node with the corresponding Control Flow Graph */
+	/* Step3: Connect every individual 
+	CFG */
+	 Update edges appropriately 
 
-/* Step3: Connect every individual Control Flow Graph */ 
-
-/* Step4: Return the completed Class Control Flow Graph of G */ 
+	/* Step4: Return the completed 
+	CCFG of G */
+	 return G
 
 end ConstructCCFG
 
-\end{verbatim}
-}
+\end{lstlisting}
+
 
 {\footnotesize \bibliographystyle{acm}
 \bibliography{biblio}
