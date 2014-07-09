@@ -93,7 +93,17 @@ Whet our appetites.
 \subsection{CCFG: Class Control Flow Graph}
 
 \subsection{Backward Algorithm}
-end\\
+
+\texttt{for each n \\
+    in[n]:={ }; out[n]:={ } \\
+repeat \\
+    for each n \\
+    in’[n]:=in[n]; out’[n]:=out[n] \\
+        in[n] := use[n]}$\cup$\texttt{(out[n]-def[n])\\
+        out[n]:=}
+        
+        
+
 
 
 %----------------------------------------------------------------------------------------
