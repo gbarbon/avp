@@ -77,74 +77,17 @@ Whet our appetites.
 
 \section{Introduction}
 \paragraph{}
-
-
-%----------------------------------------------------------------------------------------
-%	2. Formal Definition of Safeness Analysis
-%----------------------------------------------------------------------------------------
-
-\section{Formal Definition of Safeness Analysis}
-\paragraph{}
-
-\subsection{Gen/Kill}
-
-\subsection{In/Out}
-
-\subsection{CCFG: Class Control Flow Graph}
-
-\subsection{Backward Algorithm}
-
-\texttt{for each n \\
-    in[n]:={ }; out[n]:={ } \\
-repeat \\
-    for each n \\
-    in’[n]:=in[n]; out’[n]:=out[n] \\
-        in[n] := use[n]}$\cup$\texttt{(out[n]-def[n])\\
-        out[n]:=}
-        
-        
-
-
-
-%----------------------------------------------------------------------------------------
-%	3. Example
-%----------------------------------------------------------------------------------------
-
-\section{Example}
-\paragraph{}
-
-
-%----------------------------------------------------------------------------------------
-%	4. Aim of project with Object Oriented Language
-%----------------------------------------------------------------------------------------
-
-\section{Aim of Project with Object Oriented Language}
-\paragraph{}
-
-
-%----------------------------------------------------------------------------------------
-%	5. Android World
-%----------------------------------------------------------------------------------------
-
-\section{Android World}
-\paragraph{}
-
-
-%----------------------------------------------------------------------------------------
-%	1. Aim of our project
-%----------------------------------------------------------------------------------------
-
-\section{Aim of our project}
-\paragraph{}
 Vogliamo verificare se delle variabili dell'applicazione contengono dati sensibili, a seguito dell'uso di determinati metodi che in esse hanno salvato i loro risultati.\\ 
 Nota: utilizzeremo l'abbreviazione \lq\lq metodi sensibili\rq\rq\ per metodi che generano dati contenenti informazioni sensibili e \lq\lq dati sensibili\rq\rq\ per indicare i dati generati da metodi sensibili. Utilizzeremo il verbo \lq\lq esportare\rq\rq\ per indicare tutti i possibili metodi di salvataggio/esportazione di dati sensibili. \\
 La domanda principale diventa quindi: in un'applicazione che genera dati sensibili, sono questi dati esportati? \\
+\subsection{Confidential Data Definition}
+
 
 %----------------------------------------------------------------------------------------
-%	2. Solution proposal
+%	2. Safeness Analysis Formal Definition
 %----------------------------------------------------------------------------------------
 
-\section{Solution Proposal}
+\section{Safeness Analysis Formal Definition}
 \paragraph{}
 Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Safeness Analysis\rq\rq. Quest'analisi determina le variabili che esportano dati sensibili ad ogni entry ed exit point di un nodo. Consideriamo l'insieme di valori formato da (x, x[...], n), dove x[...] \`e la catena formata da variabili usate nella definizione di x. La variabile x e la sua catena sono esportate e potenzialmente sensibili se:
 \begin{itemize}
@@ -153,7 +96,14 @@ Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Saf
 \item la variabile x non \`e mai ridefinita in p
 \end{itemize}
 
-Consideriamo quindi le operazioni che generano e killano l'informazione:\\
+The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
+(Notice: for correctness, we here redefine `sensibile' (sensibile) as `confidential', as the previous translation from Italian was not correct.)\\
+
+Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
+
+\subsection{Gen/Kill}
+
+Old gen and kill definition:\\
 \begin{align*}
 \begin{tabular}{  l l }
 	$ gen_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
@@ -168,194 +118,6 @@ Consideriamo quindi le operazioni che generano e killano l'informazione:\\
 \end{tabular}
 \end{align*}
 
-Definiamo ora: 
-\begin{itemize}
-\item direzione dell'analisi: backward
-\item confluence operator: unione, $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
-\item inizializzazione: insieme vuoto $ \emptyset $
-\end{itemize}
-
-Possiamo formalizzare le equazioni della Safeness Analysis:
-\begin{gather*}
-SA_\textrm{$exit$}(p)\ =\ 
-\begin{cases}
-\emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
-\cup\ \lbrace SA_\textrm{$entry$}(q)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
-\end{cases} \\ \\
-SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
-\end{gather*}
-% \SA_\textrm{$entry$}(\bar{i})(\Delta)=\sigma^{'}_{S^{'}}(\bar{i})(\sigma^{'}_S(\bar{i})(\Delta))
-
-Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.\\
-Di seguito alcuni esempi.\\
-
-\subsection{Example 1}
-{\tt \small
-\begin{verbatim}
-x = mysensibledata();	$ ... $		
-...
-y = x + 1;		$ No\ kill\ $
-...	
-export(y);		$ \text{gen}:\ y\ $
-\end{verbatim}
-}
-
-Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
-
-\subsection{Example 2}
-{\tt \small
-\begin{verbatim}
-x = 5;			
-...
-y = x + 1;	
-...	
-export(y);		
-\end{verbatim}
-}
-
-In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
-
-\subsection{Conclusions}
-Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.
-Questa bozza prende in considerazione esempi in pseudocodice 'imperativo'. Tutto questo lavoro, se confermato, dovr\`a quindi essere rivisto per poter essere adattato al paradigma ad oggetti del linguaggio android (considerando quindi le relative problematiche). \\
-
-%----------------------------------------------------------------------------------------
-%	3. Next step: Safeness Analysis in Object Oriented programming language
-%----------------------------------------------------------------------------------------
-
-\section{Next step: Safeness Analysis in Object Oriented programming language}
-\paragraph{}
-The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
-(Notice: for correctness, we here redefine `sensibile' (sensibile) as `confidential', as the previous translation from Italian was not correct.)\\
-
-\subsection{Example 1}
-{\tt \small
-\begin{verbatim}
-...
-Text t	= new Text(confidentialText);
-...
-\end{verbatim}
-}
-But we also need to consider Text class: \\
-
-\begin{verbatim}
-class Text {
-    string s;	//class variable
-	
-    Text(string b) { 	//constructor
-        this.s = b;
-    }
-}
-\end{verbatim}
-
-In this example it is easy to see that the object t contains confidential datas.\\
-
-\subsection{Example 2}
-{\tt \small
-\begin{verbatim}
-...
-Text t	= new Text("Hello!");
-...
-\end{verbatim}
-}
-We now consider Text class: \\
-{\tt \small
-\begin{verbatim}
-class Text {
-    string s;	//class variable
-	
-    Text(string b) { 	//constructor
-        string c	 = confidentialMethod();
-        this.s = b;
-        this.s = c + b;
-        //considering string concat allowed
-    }
-	
-    confidentialMethod(){ 
-        //method with confidential values
-        string confidentialVariable;		
-        ...
-        return confidentialVariable;
-    }
-}
-\end{verbatim}
-}
-
-In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.
-
-\begin{align*}
-\begin{tabular}{|l|*{2}{c|}}
-  \hline
-  n & gen & kill  \\
-  \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
-  \hline
-\end{tabular}
-\qquad
-\begin{tabular}{|l|*{2}{c|}}
-  \hline
-  n & exit & entry  \\
-  \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
-  \hline
-\end{tabular}
-\end{align*}
-
-\subsection{Example 3 (from example 1 of section 2)}
-{\tt \small
-\begin{verbatim}
-1    CustomClass x = new CustomClass();
-2    CustomClass y = x;
-3    y.export();
-\end{verbatim}
-}
-
-The last example has been created following the first example of section 2 of this document. We first notice that we can have various possibilities when creating a new object:\\
-
-\begin{itemize}
-  \item constructor doesn't make use of confidential data
-  \item constructor USES confidential data
-  \item parameters used in the constructor invocation contain confidential data
-  \item \ldots
-\end{itemize}
-
-If we apply backward analysis to this example, we will have the following steps:
-
-\begin{enumerate}
-\item gen step for object y (with export method)
-\item x is added to the chain of y
-\item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
-\end{enumerate}
-
-\begin{align*}
-\begin{tabular}{|l|*{2}{c|}}
-  \hline
-  n & gen & kill  \\
-  \hline 
-  3 & $\{y \}$ & \\ 
-  2 & $\{y, x\}$ & \\
-  1 &  & $\{x\}$ \\
-  \hline
-\end{tabular}
-\qquad
-\begin{tabular}{|l|*{2}{c|}}
-  \hline
-  n & exit & entry  \\
-  \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
-  \hline
-\end{tabular}
-\end{align*}
-
-Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
-
-\subsection{Formal redefinition of gen and kill}
 Let's consider operations that generate and kill information:
 \begin{align*}
 \begin{tabular}{  l l }
@@ -383,6 +145,9 @@ SA_\textrm{$exit$}(p)\ =\
 SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
 \end{gather*}
 
+Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.\\
+
+\subsection{Difference between objects and primitive data types}
 Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. First of all, it is important to make a distinction between objects and variables. This distinction will include important assumptions: first, in an object oriented programming language, like Java, objects are passed by reference, while primitive variables are passed by copy. Second... blablabla. \\
 So we present the different cases in a more precise way.\\
 
@@ -418,12 +183,7 @@ The object is used in the creation of another one, and the last one is exported.
 The object \emph{x} is created. We cannot make any \emph{kill} step, because we don't know if the constructor of this object is \emph{SAFE}. As said for the previous case, we must expand and inspect its \emph{CFG}.
 \end{description}
 
-%----------------------------------------------------------------------------------------
-%	4. CCFG: Class Control Flow Graph
-%----------------------------------------------------------------------------------------
-
-\section{CCFG: Class Control Flow Graph~\cite{CCFG}}
-\paragraph{}
+\subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \lstset{basicstyle=\small\ttfamily, tabsize=2}
 \begin{lstlisting}
 algorithm: ConstructorCCFG(C):G
@@ -453,7 +213,86 @@ begin ConstructCCFG
 end ConstructCCFG
 \end{lstlisting}
 
-\subsection{Example (from example of section 3)}
+\subsection{Safeness Analysis Algorithm}
+
+\texttt{for each n \\
+    in[n]:={ }; out[n]:={ } \\
+repeat \\
+    for each n \\
+    in’[n]:=in[n]; out’[n]:=out[n] \\
+        in[n] := use[n]}$\cup$\texttt{(out[n]-def[n])\\
+        out[n]:=}
+        
+        
+
+
+
+%----------------------------------------------------------------------------------------
+%	3. Examples
+%----------------------------------------------------------------------------------------
+
+\section{Examples}
+\paragraph{}
+
+\subsection{Example 1}
+\subsubsection{Code}
+{\tt \small
+\begin{verbatim}
+...
+Text t	= new Text("Hello!");
+...
+\end{verbatim}
+}
+We now consider Text class: \\
+{\tt \small
+\begin{verbatim}
+class Text {
+    string s;	//class variable
+	
+    Text(string b) { 	//constructor
+        string c	 = confidentialMethod();
+        this.s = b;
+        this.s = c + b;
+        //considering string concat allowed
+    }
+	
+    confidentialMethod(){ 
+        //method with confidential values
+        string confidentialVariable;		
+        ...
+        return confidentialVariable;
+    }
+}
+\end{verbatim}
+}
+
+\subsection{Dumb example}
+{\tt \small
+\begin{verbatim}
+...
+Text t	= new Text(confidentialText);
+...
+\end{verbatim}
+}
+But we also need to consider Text class: \\
+
+\begin{verbatim}
+class Text {
+    string s;	//class variable
+	
+    Text(string b) { 	//constructor
+        this.s = b;
+    }
+}
+\end{verbatim}
+
+In this example it is easy to see that the object t contains confidential datas.\\
+
+
+\subsubsection{Description}
+In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.
+
+\subsubsection{CCFG}
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, 
     text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
@@ -486,14 +325,162 @@ end ConstructCCFG
 \end{tikzpicture}
 \end{center}
 
+\subsubsection{Tables}
+\begin{align*}
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & gen & kill  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\qquad
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & exit & entry  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\end{align*}
+
+\subsection{Example 2}
+
+\subsubsection{Code}
+{\tt \small
+\begin{verbatim}
+1    CustomClass x = new CustomClass();
+2    CustomClass y = x;
+3    y.export();
+\end{verbatim}
+}
+
+\subsubsection{Description}
+
+Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
+
+Consideriamo il caso in cui x è sicuramente non sensibile. In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
+
+The last example has been created following the first example of section 2 of this document. We first notice that we can have various possibilities when creating a new object:\\
+
+\begin{itemize}
+  \item constructor doesn't make use of confidential data
+  \item constructor USES confidential data
+  \item parameters used in the constructor invocation contain confidential data
+  \item \ldots
+\end{itemize}
+
+If we apply backward analysis to this example, we will have the following steps:
+
+\begin{enumerate}
+\item gen step for object y (with export method)
+\item x is added to the chain of y
+\item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
+\end{enumerate}
+
+Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
+
+\subsubsection{CCFG}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, 
+    text width=15em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,
+    minimum height=2em]
+\begin{center}
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block] (init) {CustomClass x = new CustomClass;};
+    %\node [cloud, left of=init] (expert) {expert};
+    %\node [cloud, right of=init] (system) {system};
+    \node [block, below of=init] (2){CustomClass y = x;};
+    \node [block, below of=2] (3) {y.export;};
+    %\node [block, left of=evaluate, node distance=3cm] (update) {update model};
+    %\node [decision, below of=evaluate] (decide) {is best candidate better?};
+    %\node [block, below of=decide, node distance=3cm] (stop) {stop};
+    % Draw edges
+    \path [line] (init) -- (2);
+    \path [line] (2) -- (3);
+    %\path [line] (evaluate) -- (decide);
+    %\path [line] (decide) -| node [near start] {yes} (update);
+    %\path [line] (update) |- (identify);
+    %\path [line] (decide) -- node {no}(stop);
+    %\path [line,dashed] (expert) -- (init);
+    %\path [line,dashed] (system) -- (init);
+    %\path [line,dashed] (system) |- (evaluate);
+\end{tikzpicture}
+\end{center}
+
+\subsubsection{Tables}
+\begin{align*}
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & gen & kill  \\
+  \hline 
+  3 & $\{y \}$ & \\ 
+  2 & $\{y, x\}$ & \\
+  1 &  & $\{x\}$ \\
+  \hline
+\end{tabular}
+\qquad
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & exit & entry  \\
+  \hline 
+  3 &  & \\ 
+  2 &  &\\
+  1 &  & \\
+  \hline
+\end{tabular}
+\end{align*}
+
+%----------------------------------------------------------------------------------------
+%	4. Issues with a real Object Oriented Language
+%----------------------------------------------------------------------------------------
+
+\section{Issues with a real Object Oriented Language}
+\paragraph{}
+\subsection{Inheritance}
+\subsection{Extension}
+\subsection{Interfaces}
+\subsection{Overloading}
+\subsection{Overriding}
+\subsection{...}
+
+
+%----------------------------------------------------------------------------------------
+%	5. Android Environment
+%----------------------------------------------------------------------------------------
+
+\section{Android Environment}
+\paragraph{}
+\subsection{Methods and data structure selection}
+\subsection{Analysis adaptation to Android Environment}
+\subsection{Android App Example}
+
+%----------------------------------------------------------------------------------------
+%	6. Conclusions
+%----------------------------------------------------------------------------------------
+
+\section{Conclusions}
+\paragraph{}
+\subsection{Future developments}
+
+%----------------------------------------------------------------------------------------
+%	NOTES AND BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
 {\footnotesize \bibliographystyle{acm}
 \bibliography{biblio}
 }
 
-
-
 \theendnotes
-
 
 %----------------------------------------------------------------------------------------
 %	END OF DOCUMENT
