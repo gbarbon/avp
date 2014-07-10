@@ -36,7 +36,6 @@
 
 %\usepackage{sectsty} % Allows customizing section commands
 %\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
-
 %\setlength\parindent{0pt} % Removes all indentation from paragraphs
 
 %----------------------------------------------------------------------------------------
@@ -81,7 +80,7 @@ Vogliamo verificare se delle variabili dell'applicazione contengono dati sensibi
 Nota: utilizzeremo l'abbreviazione \lq\lq metodi sensibili\rq\rq\ per metodi che generano dati contenenti informazioni sensibili e \lq\lq dati sensibili\rq\rq\ per indicare i dati generati da metodi sensibili. Utilizzeremo il verbo \lq\lq esportare\rq\rq\ per indicare tutti i possibili metodi di salvataggio/esportazione di dati sensibili. \\
 La domanda principale diventa quindi: in un'applicazione che genera dati sensibili, sono questi dati esportati? \\
 \subsection{Confidential Data Definition}
-
+Blabla
 
 %----------------------------------------------------------------------------------------
 %	2. Safeness Analysis Formal Definition
@@ -89,35 +88,18 @@ La domanda principale diventa quindi: in un'applicazione che genera dati sensibi
 
 \section{Safeness Analysis Formal Definition}
 \paragraph{}
-Utilizziamo Data Flow Analysis. Ipotizziamo di nominare quest'analisi \lq\lq Safeness Analysis\rq\rq. Quest'analisi determina le variabili che esportano dati sensibili ad ogni entry ed exit point di un nodo. Consideriamo l'insieme di valori formato da (x, x[...], n), dove x[...] \`e la catena formata da variabili usate nella definizione di x. La variabile x e la sua catena sono esportate e potenzialmente sensibili se:
-\begin{itemize}
-\item esiste un percorso p da n a m
-\item la variabile x \`e esportata e potenzialmente sensibile in n
-\item la variabile x non \`e mai ridefinita in p
+Our analysis will be based on the Data Flow analysis techniques, and will be named \emph{Safeness Analysis}. As said before, it will identify exported elements that contains confidential data. This analysis will determine exported and possibly confidential variables at the entry and exit point of each node. We will consider the collection of values composed of $\{x, x[y, z, \ldots]\}$ where \emph{x} is the exported variable and [\emph{y,z,...}] is the chain of variables used in the definition of \emph{x}. Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive elements, but we will see this later in a more precise way.\\
+
+Variable \emph{x} and its chain are exported and potentially confidential if:
+\begin{itemize}\itemsep2pt \parskip0pt \parsep0pt
+\item a path \emph{p} from \emph{n} to \emph{m} exists
+\item variable \emph{x} is exported and potentially\\ confidential in \emph{n}
+\item variable \emph{x} is never re-defined in \emph{p}
 \end{itemize}
 
-The next step consist in redefine our Safeness Analysis in an Object Oriented environment. We will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.\\ \\
-(Notice: for correctness, we here redefine `sensibile' (sensibile) as `confidential', as the previous translation from Italian was not correct.)\\
-
-Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
+We have to consider that our \emph{Safeness Analysis} is taking place in an Object Oriented environment. Anyway, we will deal later with complex concepts from O. O. programming, like interfaces and interfaces. On the other hand, we will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language similar to Java that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.
 
 \subsection{Gen/Kill}
-
-Old gen and kill definition:\\
-\begin{align*}
-\begin{tabular}{  l l }
-	$ gen_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
-	& OR \\
-	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ $\\ 
-	& $ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
-	& \\                  
-	$  kill_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
-    & OR \\ 
-    & $ chain\ of\ var\ x\ contains\ only\ variables\ $ \\
-    & $ that\ are\ not\ sensible\ \} $ \\
-\end{tabular}
-\end{align*}
-
 Let's consider operations that generate and kill information:
 \begin{align*}
 \begin{tabular}{  l l }
@@ -128,14 +110,29 @@ Let's consider operations that generate and kill information:
 \end{tabular}
 \end{align*}
 
-We define: 
+%We can expand \emph{gen} and \emph{kill} definition:\\
+%\begin{align*}
+%\begin{tabular}{  l l }
+%	$ gen_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ exported $\\ 
+%	& OR \\
+%	& $ var\ x\ is\ used\ by\ an\ exported\ variable\ y\ $\\ 
+%	& $ ( so\ x\ is\ added\ in\ the\ chain\ of\ y ) \} $ \\
+%	& \\                  
+%	$  kill_{SA}[\text{B}]= $ & $ \{ var\ x\ is\ not\ created\ by\ a\ sensible\ method\ $\\
+%    & OR \\ 
+%    & $ chain\ of\ var\ x\ contains\ only\ variables\ $ \\
+%    & $ that\ are\ not\ sensible\ \} $ \\
+%\end{tabular}
+%\end{align*}
+
+\noindent We define: 
 \begin{description}
 \item[\textbf{Analysis direction:}] backward
 \item[\textbf{Confluence operator: }] union\\ $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
 \item[\textbf{Initialization: }] empty set, \quad $ \emptyset $
 \end{description}
 
-Safeness Analysis equations:
+\noindent Safeness Analysis equations:
 \begin{gather*}
 SA_\textrm{$exit$}(p)\ =\ 
 \begin{cases}
@@ -145,9 +142,13 @@ SA_\textrm{$exit$}(p)\ =\
 SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
 \end{gather*}
 
+
+Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
 Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.\\
 
 \subsection{Difference between objects and primitive data types}
+blablabla Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive elements, but we will see this later in a more precise way. blablabla\\
+
 Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. First of all, it is important to make a distinction between objects and variables. This distinction will include important assumptions: first, in an object oriented programming language, like Java, objects are passed by reference, while primitive variables are passed by copy. Second... blablabla. \\
 So we present the different cases in a more precise way.\\
 
@@ -184,6 +185,9 @@ The object \emph{x} is created. We cannot make any \emph{kill} step, because we 
 \end{description}
 
 \subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
+Blabla
+
+\subsubsection{CCFG Constructor Algorithm}
 \lstset{basicstyle=\small\ttfamily, tabsize=2}
 \begin{lstlisting}
 algorithm: ConstructorCCFG(C):G
@@ -233,6 +237,7 @@ repeat \\
 
 \section{Examples}
 \paragraph{}
+Blabla
 
 \subsection{Example 1}
 \subsubsection{Code}
@@ -446,12 +451,25 @@ Furthermore, it's important to remark that a class may declare confidential vari
 
 \section{Issues with a real Object Oriented Language}
 \paragraph{}
+Blabla
+
 \subsection{Inheritance}
+Inheritance Blabla
+
 \subsection{Extension}
+Extension Blabla
+
 \subsection{Interfaces}
+Interfaces Blabla
+
 \subsection{Overloading}
+Overloading Blabla
+
 \subsection{Overriding}
-\subsection{...}
+Overriding Blabla
+
+\subsection{\ldots}
+Blabla
 
 
 %----------------------------------------------------------------------------------------
@@ -460,9 +478,16 @@ Furthermore, it's important to remark that a class may declare confidential vari
 
 \section{Android Environment}
 \paragraph{}
+Blabla
+
 \subsection{Methods and data structure selection}
+Blabla
+
 \subsection{Analysis adaptation to Android Environment}
+Blabla
+
 \subsection{Android App Example}
+Blabla
 
 %----------------------------------------------------------------------------------------
 %	6. Conclusions
@@ -470,7 +495,10 @@ Furthermore, it's important to remark that a class may declare confidential vari
 
 \section{Conclusions}
 \paragraph{}
+Blabla
+
 \subsection{Future developments}
+Blabla
 
 %----------------------------------------------------------------------------------------
 %	NOTES AND BIBLIOGRAPHY
