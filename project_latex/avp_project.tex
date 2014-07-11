@@ -80,6 +80,7 @@ Vogliamo verificare se delle variabili dell'applicazione contengono dati sensibi
 Nota: utilizzeremo l'abbreviazione \lq\lq metodi sensibili\rq\rq\ per metodi che generano dati contenenti informazioni sensibili e \lq\lq dati sensibili\rq\rq\ per indicare i dati generati da metodi sensibili. Utilizzeremo il verbo \lq\lq esportare\rq\rq\ per indicare tutti i possibili metodi di salvataggio/esportazione di dati sensibili. \\
 La domanda principale diventa quindi: in un'applicazione che genera dati sensibili, sono questi dati esportati? \\
 \subsection{Confidential Data Definition}
+\paragraph{}
 Blabla
 
 %----------------------------------------------------------------------------------------
@@ -88,18 +89,19 @@ Blabla
 
 \section{Safeness Analysis Formal Definition}
 \paragraph{}
-Our analysis will be based on the Data Flow analysis techniques, and will be named \emph{Safeness Analysis}. As said before, it will identify exported elements that contains confidential data. This analysis will determine exported and possibly confidential variables at the entry and exit point of each node. We will consider the collection of values composed of $\{x, x[y, z, \ldots]\}$ where \emph{x} is the exported variable and [\emph{y,z,...}] is the chain of variables used in the definition of \emph{x}. Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive elements, but we will see this later in a more precise way.\\
+Our analysis will be based on the Data Flow analysis techniques, and will be named \emph{Safeness Analysis}. As said before, it will identify exported elements that contains confidential data. This analysis will determine exported and possibly confidential variables at the entry and exit point of each node. We will consider the collection of values composed of $\{x, x[y, z, \ldots]\}$ where \emph{x} is the exported variable and [\emph{y,z,...}] is the chain of variables used in the definition of \emph{x}. Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive element, but we will see this later in a more precise way.\\
 
-Variable \emph{x} and its chain are exported and potentially confidential if:
+Thus, variable \emph{x} and its chain are exported and potentially confidential if:
 \begin{itemize}\itemsep2pt \parskip0pt \parsep0pt
 \item a path \emph{p} from \emph{n} to \emph{m} exists
 \item variable \emph{x} is exported and potentially\\ confidential in \emph{n}
 \item variable \emph{x} is never re-defined in \emph{p}
 \end{itemize}
 
-We have to consider that our \emph{Safeness Analysis} is taking place in an Object Oriented environment. Anyway, we will deal later with complex concepts from O. O. programming, like interfaces and interfaces. On the other hand, we will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language similar to Java that will use only classes, methods and creators, in order to ``make it simple''. Let's take some examples.
+We have to consider that our \emph{Safeness Analysis} is taking place in an Object Oriented environment. Anyway, we will deal later with complex concepts from O. O. programming, like interfaces and interfaces. On the other hand, we will first start from a simple pseudo-code version of an object oriented programming paradigm. That's to say, an o.o. programming language similar to Java that will use only classes, methods and creators, in order to ``make it simple''.
 
 \subsection{Gen/Kill}
+\paragraph{}
 Let's consider operations that generate and kill information:
 \begin{align*}
 \begin{tabular}{  l l }
@@ -110,6 +112,7 @@ Let's consider operations that generate and kill information:
 \end{tabular}
 \end{align*}
 
+A more precise definition of \emph{gen} and \emph{kill} could be made considering also variable that are not exported directly, but are used in the definition of exported variable. But we decided to have simple \emph{gen} and \emph{kill} definition, and to improve it later for specific cases (please refer to section 2.3).
 %We can expand \emph{gen} and \emph{kill} definition:\\
 %\begin{align*}
 %\begin{tabular}{  l l }
@@ -125,14 +128,15 @@ Let's consider operations that generate and kill information:
 %\end{tabular}
 %\end{align*}
 
-\noindent We define: 
+We thus define specific features of our analysis. 
 \begin{description}
 \item[\textbf{Analysis direction:}] backward
 \item[\textbf{Confluence operator: }] union\\ $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
 \item[\textbf{Initialization: }] empty set, \quad $ \emptyset $
 \end{description}
 
-\noindent Safeness Analysis equations:
+Now it is possible to define the equations of the analysis.
+\subsection{Safeness Analysis equations:}
 \begin{gather*}
 SA_\textrm{$exit$}(p)\ =\ 
 \begin{cases}
@@ -142,17 +146,24 @@ SA_\textrm{$exit$}(p)\ =\
 SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
 \end{gather*}
 
-
-Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
-Se alla fine dell'analisi otteniamo l'insieme vuoto, il programma sar\`a SAFE. Altrimenti il programma sar\`a UNSAFE e avremo ottenuto l'insieme di tutte le variabili sensibili esportate.\\
+At the end of the analysis we will have two possible states:
+\begin{itemize}
+\item no more variables collected in our tables
+\item some variables are still present in our tables
+\end{itemize}
+The first state means that the examined program is \emph{SAFE}. Indeed, if no variables are present in our analysis memory, all the variables considered possibly unsafe have been removed because they are certified as non confidential data.\\
+On the other side, the second state means that the program is \emph{UNSAFE}. This is due to the fact that some variables remains in our analysis memory, confirming that these variables contain confidential data. Thus, our analysis is also capable of locating unsafe variables.
 
 \subsection{Difference between objects and primitive data types}
+\paragraph{}
 blablabla Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive elements, but we will see this later in a more precise way. blablabla\\
 
-Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. First of all, it is important to make a distinction between objects and variables. This distinction will include important assumptions: first, in an object oriented programming language, like Java, objects are passed by reference, while primitive variables are passed by copy. Second... blablabla. \\
-So we present the different cases in a more precise way.\\
+BLABABLA Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
 
-\noindent \textbf{Variables}
+Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. First of all, it is important to make a distinction between objects and variables. This distinction will include important assumptions: first, in an object oriented programming language, like Java, objects are passed by reference, while primitive variables are passed by copy. Second... blablabla. \\
+So we present the different cases in a more precise way.
+
+\noindent \paragraph{Variables}
 \begin{description}
 
 \item[\texttt{export(x)}] \hfill \\
@@ -169,7 +180,7 @@ The variable \emph{x} is generated. If, by expanding and inspecting the \emph{CF
 
 \end{description}
 
-\noindent\textbf{Objects}
+\noindent \paragraph{Objects}
 \begin{description}
 \item[\texttt{x.export()}] \hfill \\
 Object \emph{x} is exported with a method. In this case the \emph{gen} step will add the record $\{x\}$ in the table into the \emph{gen} column.
@@ -185,6 +196,7 @@ The object \emph{x} is created. We cannot make any \emph{kill} step, because we 
 \end{description}
 
 \subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
+\paragraph{}
 Blabla
 
 \subsubsection{CCFG Constructor Algorithm}
@@ -295,6 +307,7 @@ In this example it is easy to see that the object t contains confidential datas.
 
 
 \subsubsection{Description}
+\paragraph{}
 In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.
 
 \subsubsection{CCFG}
@@ -365,7 +378,7 @@ In the second example object t seems to be not confidential. anyway, we must inv
 }
 
 \subsubsection{Description}
-
+\paragraph{}
 Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
 
 Consideriamo il caso in cui x è sicuramente non sensibile. In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
@@ -454,21 +467,27 @@ Furthermore, it's important to remark that a class may declare confidential vari
 Blabla
 
 \subsection{Inheritance}
+\paragraph{}
 Inheritance Blabla
 
 \subsection{Extension}
+\paragraph{}
 Extension Blabla
 
 \subsection{Interfaces}
+\paragraph{}
 Interfaces Blabla
 
 \subsection{Overloading}
+\paragraph{}
 Overloading Blabla
 
 \subsection{Overriding}
+\paragraph{}
 Overriding Blabla
 
 \subsection{\ldots}
+\paragraph{}
 Blabla
 
 
@@ -481,12 +500,15 @@ Blabla
 Blabla
 
 \subsection{Methods and data structure selection}
+\paragraph{}
 Blabla
 
 \subsection{Analysis adaptation to Android Environment}
+\paragraph{}
 Blabla
 
 \subsection{Android App Example}
+\paragraph{}
 Blabla
 
 %----------------------------------------------------------------------------------------
@@ -498,6 +520,7 @@ Blabla
 Blabla
 
 \subsection{Future developments}
+\paragraph{}
 Blabla
 
 %----------------------------------------------------------------------------------------
