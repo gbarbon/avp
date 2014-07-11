@@ -89,7 +89,7 @@ Blabla
 
 \section{Safeness Analysis Formal Definition}
 \paragraph{}
-Our analysis will be based on the Data Flow analysis techniques, and will be named \emph{Safeness Analysis}. As said before, it will identify exported elements that contains confidential data. This analysis will determine exported and possibly confidential variables at the entry and exit point of each node. We will consider the collection of values composed of $\{x, x[y, z, \ldots]\}$ where \emph{x} is the exported variable and [\emph{y,z,...}] is the chain of variables used in the definition of \emph{x}. Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive element, but we will see this later in a more precise way.\\
+Our analysis will be based on the Data Flow analysis techniques, and will be named \emph{Safeness Analysis}. As said before, it will identify exported elements that contains confidential data. This analysis will determine exported and possibly confidential variables at the entry and exit point of each node. We will consider the collection of values composed of $\{x, x[y, z, \ldots], n\}$ where \emph{x} is the exported variable, [\emph{y,z,...}] is the chain of variables used in the definition of \emph{x} and \emph{n} is the involved node. Moreover, we will consider $\{x, y, n\}$ as the variable \emph{x} equal to \emph{y} in node \emph{n}. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive element, but we will see this later in a more precise way.\\
 
 Thus, variable \emph{x} and its chain are exported and potentially confidential if:
 \begin{itemize}\itemsep2pt \parskip0pt \parsep0pt
@@ -127,8 +127,9 @@ A more precise definition of \emph{gen} and \emph{kill} could be made considerin
 %    & $ that\ are\ not\ sensible\ \} $ \\
 %\end{tabular}
 %\end{align*}
+
 \indent
-In order to collect only variables that are exported, our analysis will start from the end of the program. Thus, it will be a \emph{Backward Analysis}. This behaviour is similar to the \emph{Live Variables Analysis~\cite{Nielson:1999:PPA:555142}} one. We can now specify the features of our analysis. 
+In order to collect only variables that are exported, our analysis will start from the end of the program. Thus, it will be a \emph{Backward Analysis}. This behaviour is similar to the \emph{Live Variables Analysis}~\cite{Nielson:1999:PPA:555142} one. We can now specify the features of our analysis. 
 \begin{description}
 \item[\textbf{Analysis direction:}] backward
 \item[\textbf{Confluence operator: }] union\\ $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
@@ -156,24 +157,25 @@ On the other side, the second state means that the program is \emph{UNSAFE}. Thi
 
 \subsection{Difference between objects and primitive data types}
 \paragraph{}
-blablabla Moreover, we will consider $\{x, y\}$ as the variable x equal to y. Please notice that this last statement has different meanings depending on the fact that the variable consist in an object or in a primitive elements, but we will see this later in a more precise way. blablabla\\
+The definitions given so far are not sufficient to describe our analysis. Indeed \emph{gen} and \emph{kill} are more complicated. We have to deal with different problems related to the object oriented paradigm. First of all, we have to consider that also variables used in the definition of elements that will be exported may contain confidential data. So a complete analysis has to consider also these variables.
+Second, it is important to divide variables into two subsets:
+\begin{itemize}
+\item primitive variables
+\item objects
+\end{itemize}
+This necessary distinction comes from various assumptions. Firs of all, in an object oriented programming language objects are passed by reference, while primitive variables are passed by copy. In example, in Java a variable that uses a class as type does not actually contain an object of that class. Instead, it only stores the position of the object in the system memory ~\cite{Horstmann:2008:BJ:1796502}. So we present the different cases in a more precise way.
 
-BLABABLA Risulta quindi necessario dover utilizzare una catena/array di riferimenti, per sapere tutta la lista di variabili che ipotizzate sensibili che sono collegate. Ci\`o ci permetterebbe inoltre di gestire tutte le problematiche relative alle variabili passate per riferimento.\\
-
-Anyway these definitions are not sufficient. Indeed \emph{gen} and \emph{kill} are more complicated. First of all, it is important to make a distinction between objects and variables. This distinction will include important assumptions: first, in an object oriented programming language, like Java, objects are passed by reference, while primitive variables are passed by copy. Second... blablabla. \\
-So we present the different cases in a more precise way.
-
-\noindent \paragraph{Variables}
+\noindent \paragraph{Primitive Variables}
 \begin{description}
 
 \item[\texttt{export(x)}] \hfill \\
-Variable \emph{x} is exported with a method. In this case the \emph{gen} step will add the record $\{x\}$ in the table into the \emph{gen} column.
+Variable \emph{x} is exported with a method. In this case the \emph{gen} step will add the record $\{x, n\}$ in the table into the \emph{gen} column.
 
 \item[\texttt{x = y}] \hfill \\
-The variable is copied from another one, and we now that it will be exported (notice that, in order to make this \emph{gen} step sound, we also have to know that variable \emph{x} will not change its value in the path between the copy and the exportation). In this case the \emph{gen} step will add the record $\{x, y\}$ in the table into the \emph{gen} column. A later \emph{kill} (going backward after this statement) of the copied variable \emph{y} will remove the information added with this \emph{gen} step, and also the information related to the exportation of the \emph{x}  variable.
+The variable is copied from another one, and we know that it will be exported (notice that, in order to make this \emph{gen} step sound, we also have to know that variable \emph{x} will not change its value in the path between the copy and the exportation points). In this case the \emph{gen} step will add the record $\{x, y, n\}$ in the table into the \emph{gen} column. A later \emph{kill} (going backward after this statement) of the copied variable \emph{y} will remove the information added with this \emph{gen} step, and also the information related to the exportation of the \emph{x} variable.
 
 \item[\texttt{x = method(y)}] \hfill \\
-The variable is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y]\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred variable \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first variable (\emph{x}). This is because, even if \emph{y} variable is \emph{SAFE}, the method that generates the first one may make use of confidential information, like other methods or variables belonging to its class, and so we cannot trust variable \emph{x}. In order to check the safeness of variable \emph{x}, we must expand the \emph{CFG} of this method.
+The variable is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. If the primitive variables involved as parameter are more than one, we will have a record like this: $\{x, x[y,x,...], n\}$.  A later \emph{kill} of the referred variable \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first variable \emph{x}. This is because, even if \emph{y} variable is \emph{SAFE}, the method that generates the first one may make use of confidential information, like other methods or variables belonging to its class, and so we cannot trust variable \emph{x}. In order to check the safeness of variable \emph{x}, we must expand the \emph{CFG} of this method.
 
 \item[\texttt{x = method()}] \hfill \\
 The variable \emph{x} is generated. If, by expanding and inspecting the \emph{CFG} of this method, we find out (or we already know) that it's \emph{not confidential}, we can perform a \emph{kill} step. Otherwise, no steps are performed.
@@ -183,17 +185,19 @@ The variable \emph{x} is generated. If, by expanding and inspecting the \emph{CF
 \noindent \paragraph{Objects}
 \begin{description}
 \item[\texttt{x.export()}] \hfill \\
-Object \emph{x} is exported with a method. In this case the \emph{gen} step will add the record $\{x\}$ in the table into the \emph{gen} column.
+Object \emph{x} is exported with a method. In this case the \emph{gen} step will add the record $\{x, n\}$ in the table into the \emph{gen} column.
 
 \item[\texttt{CClass x = y}] \hfill \\
-The object is referred from another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, y\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object (\emph{y}) will remove the information added with this \emph{gen} step, and also the information related to the exportation of the first object (\emph{x}).
+The object is referred from another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, y, n\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object (\emph{y}) will remove the information added with this \emph{gen} step, and also the information related to the exportation of the first object (\emph{x}).
 
 \item[\texttt{CClass x = new CClass(y)}] \hfill \\
-The object is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y]\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object (\emph{y}) will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first object (\emph{x}). This is because, even if \emph{y} object is \emph{SAFE}, the creator of the first one may make use of confidential information, and so we cannot trust the \emph{x} object. In order to check the safeness of the \emph{x} object, we must expand the \emph{CFG} of its constructor.
+The object is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first object (\emph{x}). This is because, even if \emph{y} object is \emph{SAFE}, the creator of the first one may make use of confidential information, and so we cannot trust the \emph{x} object. In order to check the safeness of the \emph{x} object, we must expand the \emph{CFG} of its constructor.
 
 \item[\texttt{CClass x = new CClass()}] \hfill \\
 The object \emph{x} is created. We cannot make any \emph{kill} step, because we don't know if the constructor of this object is \emph{SAFE}. As said for the previous case, we must expand and inspect its \emph{CFG}.
 \end{description}
+
+As we have just seen, primitive variables and objects have different behaviour in the \emph{gen} and \emph{kill} steps. Anyway, the syntax used in the tables of the analysis is quite similar.
 
 \subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \paragraph{}

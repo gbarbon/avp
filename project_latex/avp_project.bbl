@@ -5,6 +5,11 @@
 \newblock Performing data flow testing on classes.
 \newblock {\em Department of Computer Science Clemson University, Clemson\/}.
 
+\bibitem{Horstmann:2008:BJ:1796502}
+{\sc Horstmann, C.~S.}
+\newblock {\em Big Java}, 2nd~ed.
+\newblock John Wiley \& Sons, Inc., New York, NY, USA, 2008.
+
 \bibitem{Nielson:1999:PPA:555142}
 {\sc Nielson, F., Nielson, H.~R., and Hankin, C.}
 \newblock {\em Principles of Program Analysis}.
