@@ -112,7 +112,7 @@ Let's consider operations that generate and kill information:
 \end{tabular}
 \end{align*}
 
-A more precise definition of \emph{gen} and \emph{kill} could be made considering also variable that are not exported directly, but are used in the definition of exported variable. But we decided to have simple \emph{gen} and \emph{kill} definition, and to improve it later for specific cases (please refer to section 2.3).
+A more precise definition of \emph{gen} and \emph{kill} could be made considering also variable that are not exported directly, but are used in the definition of exported variable. But we decided to have simple \emph{gen} and \emph{kill} definition, and to improve it later for specific cases (please refer to section 2.3).\\
 %We can expand \emph{gen} and \emph{kill} definition:\\
 %\begin{align*}
 %\begin{tabular}{  l l }
@@ -127,16 +127,16 @@ A more precise definition of \emph{gen} and \emph{kill} could be made considerin
 %    & $ that\ are\ not\ sensible\ \} $ \\
 %\end{tabular}
 %\end{align*}
-
-We thus define specific features of our analysis. 
+\indent
+In order to collect only variables that are exported, our analysis will start from the end of the program. Thus, it will be a \emph{Backward Analysis}. This behaviour is similar to the \emph{Live Variables Analysis~\cite{Nielson:1999:PPA:555142}} one. We can now specify the features of our analysis. 
 \begin{description}
 \item[\textbf{Analysis direction:}] backward
 \item[\textbf{Confluence operator: }] union\\ $ \text{out}[B]\ =\ \cup\ \text{in}[S],\ over\ the\ successor\ S\ of\ B\  $
 \item[\textbf{Initialization: }] empty set, \quad $ \emptyset $
 \end{description}
 
-Now it is possible to define the equations of the analysis.
-\subsection{Safeness Analysis equations:}
+It is now possible to define the equations of the analysis.
+\subsection{Safeness Analysis equations}
 \begin{gather*}
 SA_\textrm{$exit$}(p)\ =\ 
 \begin{cases}

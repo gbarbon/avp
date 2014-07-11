@@ -5,4 +5,9 @@
 \newblock Performing data flow testing on classes.
 \newblock {\em Department of Computer Science Clemson University, Clemson\/}.
 
+\bibitem{Nielson:1999:PPA:555142}
+{\sc Nielson, F., Nielson, H.~R., and Hankin, C.}
+\newblock {\em Principles of Program Analysis}.
+\newblock Springer-Verlag New York, Inc., Secaucus, NJ, USA, 1999, ch.~2.1.4.
+
 \end{thebibliography}
