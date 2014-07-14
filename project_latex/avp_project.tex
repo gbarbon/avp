@@ -31,7 +31,8 @@
 \usepackage[english]{babel} % English language/hyphenation
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 \usepackage{listings} % source code package
-\usepackage{tikz}
+\usepackage{tikz} % graph package
+\usepackage{supertabular} % table span multiple pages
 \usetikzlibrary{shapes,arrows}
 
 %\usepackage{sectsty} % Allows customizing section commands
@@ -253,122 +254,167 @@ repeat \\
 
 \section{Examples}
 \paragraph{}
-Blabla
+We now apply our analysis to some examples written with the proposed simple version of an object oriented programming language.
 
 \subsection{Example 1}
+\paragraph{}
+In this example we will see a very simple application that uses two class.
 \subsubsection{Code}
-{\tt \small
-\begin{verbatim}
-...
-Text t	= new Text("Hello!");
-...
-\end{verbatim}
-}
-We now consider Text class: \\
-{\tt \small
-\begin{verbatim}
-class Text {
-    string s;	//class variable
-	
-    Text(string b) { 	//constructor
-        string c	 = confidentialMethod();
-        this.s = b;
-        this.s = c + b;
-        //considering string concat allowed
-    }
-	
-    confidentialMethod(){ 
-        //method with confidential values
-        string confidentialVariable;		
-        ...
-        return confidentialVariable;
-    }
-}
-\end{verbatim}
-}
-
-\subsection{Dumb example}
-{\tt \small
-\begin{verbatim}
-...
-Text t	= new Text(confidentialText);
-...
-\end{verbatim}
-}
-But we also need to consider Text class: \\
 
 \begin{verbatim}
-class Text {
-    string s;	//class variable
-	
-    Text(string b) { 	//constructor
-        this.s = b;
-    }
-}
+. class MClass{
+.
+1     void main (String[] args) {	    
+2         Text t	 = new Text("Hello!");
+3         exportMethod(t);
+.     }
+.
+4     void exportMethod(Text t) {        
+5         ...
+.         //this method exports confidential values
+.     }
+. }
 \end{verbatim}
 
-In this example it is easy to see that the object t contains confidential datas.\\
+\noindent We now have to consider Text class:
+\begin{verbatim}
+. class Text {
+1     string s;
+.	
+2     Text(string b) { 	//constructor
+3         string c	 = confidentialMethod();
+4         this.s = b;
+5         this.s = this.s + c;
+.     }
+.	
+6     string confidentialMethod(){ 
+.         //method with confidential values
+7         string confidentialVariable;		
+8         return confidentialVariable;
+.     }
+. }
+\end{verbatim}
 
+%\subsection{Dumb example}
+%{\tt \small
+%\begin{verbatim}
+%...
+%Text t	= new Text(confidentialText);
+%...
+%\end{verbatim}
+%}
+%But we also need to consider Text class: \\
+%
+%\begin{verbatim}
+%class Text {
+%    string s;	//class variable
+%	
+%    Text(string b) { 	//constructor
+%        this.s = b;
+%    }
+%}
+%\end{verbatim}
+%
+%In this example it is easy to see that the object t contains confidential datas.\\
 
 \subsubsection{Description}
 \paragraph{}
-In the second example object t seems to be not confidential. anyway, we must investigate also class Text, because the constructor may contains methods that create confidential data in the new object.
+By only looking at \emph{MClass} object \emph{t} seems to be not confidential. Anyway, we must investigate also \emph{Text} class, because the constructor may contains methods that create confidential data in the new object. In order to do this, we can expand the CCFG of the \emph{text} constructor. In this way, we will see that the constructor makes use of \emph{ConfidentialMethod}, a method that generates confidential data. So, the object \emph{t} will be considered \emph{UNSAFE} and consequently also the application will be believed as \emph{UNSAFE}.
 
 \subsubsection{CCFG}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
 % Define block styles
-\tikzstyle{decision} = [diamond, draw, 
-    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, 
-    text width=15em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, align=left]
 \tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,
-    minimum height=2em]
-\begin{center}
-\begin{tikzpicture}[node distance = 2cm, auto]
+\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,minimum height=2em]
+\tikzstyle{back}=[draw, thick, rectangle, minimum height = 3em, minimum width = 3em]
+\tikzstyle{every node}=[font=\footnotesize]
+\scalebox{0.85}{
+\begin{tikzpicture}[node distance = 2cm, auto][every node/.style={inner sep=0,outer sep=0}]
     % Place nodes
-    \node [block] (init) {CustomClass x = new CustomClass;};
-    %\node [cloud, left of=init] (expert) {expert};
-    %\node [cloud, right of=init] (system) {system};
-    \node [block, below of=init] (2){CustomClass y = x;};
-    \node [block, below of=2] (3) {y.export;};
-    %\node [block, left of=evaluate, node distance=3cm] (update) {update model};
-    %\node [decision, below of=evaluate] (decide) {is best candidate better?};
-    %\node [block, below of=decide, node distance=3cm] (stop) {stop};
+    \node [block] (MC1) {void main (String[] args) \{ \\    Text t = new Text("Hello!");\\     exportMethod(t);\\ \} };
+    \node [block, below of=MC1] (MC2){void exportMethod(Text t) \{ \\ ... \\ \} };
+    \node [block, right of=MC2, node distance=5cm] (T1) {Text(string b) \{\\ string c = confidentialMethod(); \\ this.s = b; \\ this.s = this.s + c; \\ \} };
+    \node [block, below of=T1] (T2) {string confidentialMethod()\{ \\ string confidentialVariable; \\ return confidentialVariable;\\ \} };
+    
     % Draw edges
-    \path [line] (init) -- (2);
-    \path [line] (2) -- (3);
-    %\path [line] (evaluate) -- (decide);
-    %\path [line] (decide) -| node [near start] {yes} (update);
-    %\path [line] (update) |- (identify);
-    %\path [line] (decide) -- node {no}(stop);
-    %\path [line,dashed] (expert) -- (init);
-    %\path [line,dashed] (system) -- (init);
-    %\path [line,dashed] (system) |- (evaluate);
+    \path [line] (MC1) -- (MC2);
+    \path [line] (T1) -- (T2);
+    
+    %class labels
+    \path (MC2.south)+(-0.4,-0.4) node (MClass) {MClass Class};
+    \path (T2.south)+(-0.4,-0.4) node (Text) {Text Class};
+
+    %background shapes 
+    \begin{pgfonlayer}{background}
+        %MClass class
+        \path (MC1.west |- MC1.north)+(-0.2,0.2) node (a) {};
+        \path (MC2.south -| MC1.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %Text class                
+        \path (T1.west |- T1.north)+(-0.2,0.2) node (a) {};
+        \path (T2.south -| T1.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+    \end{pgfonlayer}   
+    
+    %curved arrows
+    \begin{scope}[looseness=1.6]
+        \path [draw, ->] (MC1) edge[out=0,in=90,->]  node [right] {} (T1);
+        \path [draw, ->] (T1) edge[out=180,in=0,->]  node [right] {} (MC1);
+        %\path [draw, ->] (T2) edge[out=270,in=0,->]  node [right] {} (T1);
+        %\path [draw, ->] (MC1) edge[out=270,in=180,->]  node [right] {} (MC1);
+    \end{scope} 
+    
 \end{tikzpicture}
-\end{center}
+}
 
 \subsubsection{Tables}
-\begin{align*}
-\begin{tabular}{|l|*{2}{c|}}
+
+\begin{supertabular}{|l|*{3}{c|}}
   \hline
-  n & gen & kill  \\
+  n & classname & gen & kill  \\
   \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
+  3 & MClass & \{t,,3, MClass\} & \\ 
+  2 & MClass & - & - \\
+  5 & Text & \{t,t[c],5, Text\} & \\
+  4 & Text & \{t,t[c,b],4, Text\} & \\
+  3 & Text & - & - \\
+  8 & Text &  & \\
+  7 & Text &  & \\
+  6 & Text &  & \\
+  3 & Text &  & \\
+  2 & Text &  & \\
+  2 & MClass &  & \{b,2,MClass\}\\
+  1 & MClass &  & \\
   \hline
-\end{tabular}
-\qquad
-\begin{tabular}{|l|*{2}{c|}}
+\end{supertabular}
+
+
+\begin{supertabular}{|l|*{3}{c|}}
   \hline
-  n & exit & entry  \\
+  n & classname & entry & exit  \\
   \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
+  3 & MClass & \{t\} &  \\ 
+  2 & MClass & - & -\\
+  5 & Text & \{t, c\} & \{t\} \\
+  4 & Text & \{t, c, b\} & \{t, c\} \\
+  3 & Text & - & - \\
+  8 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  7 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  6 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  3 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  2 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  2 & MClass & \{t, c\} & \{t, c, b\}    \\
+  1 & MClass & \{t, c\} & \{t, c\}    \\
   \hline
-\end{tabular}
-\end{align*}
+\end{supertabular}
+
 
 \subsection{Example 2}
 
@@ -489,6 +535,10 @@ Overloading Blabla
 \subsection{Overriding}
 \paragraph{}
 Overriding Blabla
+
+\subsection{Recursion}
+\paragraph{}
+Recursion Blabla
 
 \subsection{\ldots}
 \paragraph{}
