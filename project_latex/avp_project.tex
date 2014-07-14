@@ -208,7 +208,7 @@ The object is used in the creation of another one, and the last one is exported.
 The object \emph{x} is created. We cannot make any \emph{kill} step, because we don't know if the constructor of this object is \emph{SAFE}. As said for the previous case, we must expand and inspect its \emph{CFG}.
 \end{description}
 
-As we have just seen, primitive variables and objects have different behaviour in the \emph{gen} and \emph{kill} steps. Anyway, the syntax used in the tables of the analysis is quite similar.
+As we have just seen, primitive variables and objects have different behaviour in the \emph{gen} and \emph{kill} steps. Anyway, the syntax used in the tables of the analysis is quite similar. Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is \emph{SAFE}. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered \emph{SAFE}. 
 
 \subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \paragraph{}
@@ -290,7 +290,8 @@ In this example we will see a very simple application that uses two class.
 .
 4     void exportMethod(Text t) {        
 5         ...
-.         //this method exports confidential values
+.         //this method exports 
+.         //confidential values
 .     }
 . }
 \end{verbatim}
@@ -348,11 +349,8 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
 \pgfsetlayers{background,main,foreground}
 
 % Define block styles
-\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
 \tikzstyle{block} = [rectangle, draw, align=left]
 \tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,minimum height=2em]
-\tikzstyle{back}=[draw, thick, rectangle, minimum height = 3em, minimum width = 3em]
 \tikzstyle{every node}=[font=\footnotesize]
 \scalebox{0.85}{
 \begin{tikzpicture}[node distance = 2cm, auto][every node/.style={inner sep=0,outer sep=0}]
@@ -394,7 +392,7 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
 }
 
 \subsubsection{Tables}
-
+\begin{center}
 \begin{supertabular}{|l|*{3}{c|}}
   \hline
   n & classname & gen & kill  \\
@@ -413,8 +411,8 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
   1 & MClass &  & \\
   \hline
 \end{supertabular}
-
-
+\end{center}
+\begin{center}
 \begin{supertabular}{|l|*{3}{c|}}
   \hline
   n & classname & entry & exit  \\
@@ -433,96 +431,154 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
   1 & MClass & \{t, c\} & \{t, c\}    \\
   \hline
 \end{supertabular}
+\end{center}
 
 
 \subsection{Example 2}
 
 \subsubsection{Code}
-{\tt \small
 \begin{verbatim}
 1    CustomClass x = new CustomClass();
 2    CustomClass y = x;
 3    y.export();
 \end{verbatim}
-}
 
 \subsubsection{Description}
 \paragraph{}
-Partiamo dalla fine. Gen sull'ultima istruzione ci genera y. Sulla penultima dobbiamo killare y? No. Facciamo gen di x sulla catena di y. Infatti, anche se non viene generato da un metodo sensibile, non sappiamo ancora se x sia sensibile o meno. Nel caso lo fosse, considereremmo anche y sensibile. Quindi per il momento non abbiamo kill. Continuando a risalire nel codice, troviamo il punto dove viene definita la variabile x. Si tratta di un metodo sensibile, quindi non facciamo kill. Inoltre, ora sappiamo che anche y \`e sensibile. Questo esempio risulta quindi UNSAFE.\\
-
-Consideriamo il caso in cui x è sicuramente non sensibile. In questo caso abbiamo un comportamento simile al precedente, ma la situazione cambia nel momento in cui scopriamo che x non proviene da una funzione sensibile. A questo punto, verranno killate sia x che y. Alla fine avremo l'insieme vuoto, ci\`o significa che quest'esempio \`e SAFE.\\
-
-The last example has been created following the first example of section 2 of this document. We first notice that we can have various possibilities when creating a new object:\\
-
+This example has been created in order to show how important can be a Class Constructor in considering a variable confidential or not. We first notice that we can have various possibilities when creating a new object:
 \begin{itemize}
   \item constructor doesn't make use of confidential data
   \item constructor USES confidential data
   \item parameters used in the constructor invocation contain confidential data
-  \item \ldots
 \end{itemize}
 
-If we apply backward analysis to this example, we will have the following steps:
+If we apply our analysis to this example, we will have the following steps:
 
 \begin{enumerate}
 \item gen step for object y (with export method)
-\item x is added to the chain of y
+\item object y results as a reference to x, so also x is added in the table
 \item the kill step of x and y depends on the results of the analysis of the constructor method and of the CustomClass class (notice that variables declared in the class may be obtained as results of confidential methods)
 \end{enumerate}
 
-Furthermore, it's important to remark that a class may declare confidential variables, anyway if we don't have methods that export these variables, the object is SAFE. More precisely, objects may contain methods that exports confidential data, but if these methods are not used in the analysed application, these objects can be considered SAFE. \\
+We can see that it is important to expand completely a CCFG in order to discover all the interesting path. So, by expanding the CCFG of \emph{CustomClass} we can have two cases:
+\begin{itemize}
+  \item constructor USES confidential data, so variables \emph{x} and \emph{y} cannot be killed, thus the application is \emph{UNSAFE}
+  \item constructor doesn't make use of confidential data, so variables \emph{x} and \emph{y} are  both killed and the application is \emph{SAFE}
+\end{itemize}
 
 \subsubsection{CCFG}
+%% Define block styles
+%\tikzstyle{decision} = [diamond, draw, 
+%    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+%\tikzstyle{block} = [rectangle, draw, 
+%    text width=15em, text centered, rounded corners, minimum height=4em]
+%\tikzstyle{line} = [draw, -latex']
+%\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,
+%    minimum height=2em]
+%\begin{center}
+%\begin{tikzpicture}[node distance = 2cm, auto]
+%    % Place nodes
+%    \node [block] (init) {CustomClass x = new CustomClass;};
+%    \node [block, below of=init] (2){CustomClass y = x;};
+%    \node [block, below of=2] (3) {y.export;};
+%
+%    % Draw edges
+%    \path [line] (init) -- (2);
+%    \path [line] (2) -- (3);
+%\end{tikzpicture}
+%\end{center}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
 % Define block styles
-\tikzstyle{decision} = [diamond, draw, 
-    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, 
-    text width=15em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{block} = [rectangle, draw, align=left]
 \tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse, node distance=3cm,
-    minimum height=2em]
-\begin{center}
-\begin{tikzpicture}[node distance = 2cm, auto]
+\tikzstyle{every node}=[font=\footnotesize]
+\scalebox{0.85}{
+\begin{tikzpicture}[node distance = 1cm, auto][every node/.style={inner sep=0,outer sep=0}]
     % Place nodes
-    \node [block] (init) {CustomClass x = new CustomClass;};
-    %\node [cloud, left of=init] (expert) {expert};
-    %\node [cloud, right of=init] (system) {system};
-    \node [block, below of=init] (2){CustomClass y = x;};
+    \node [block] (1) {CustomClass x = new CustomClass;};
+    \node [block, below of=1] (2){CustomClass y = x;};
     \node [block, below of=2] (3) {y.export;};
-    %\node [block, left of=evaluate, node distance=3cm] (update) {update model};
-    %\node [decision, below of=evaluate] (decide) {is best candidate better?};
-    %\node [block, below of=decide, node distance=3cm] (stop) {stop};
+    \node [below of=3, node distance = 2em] (dummy) {. . .};
+    \node [below of=dummy, node distance = 2em] (method) {void export() \{...\}};
+    \node [right of=2, node distance = 4cm] (CC) {CustomClass} edge[out=90,in=0,<-] (1.east); 
+    \node [below of=CC, node distance = 2em] (dummy2) {. . .};
+    
     % Draw edges
-    \path [line] (init) -- (2);
+    \path [line] (1) -- (2);
     \path [line] (2) -- (3);
-    %\path [line] (evaluate) -- (decide);
-    %\path [line] (decide) -| node [near start] {yes} (update);
-    %\path [line] (update) |- (identify);
-    %\path [line] (decide) -- node {no}(stop);
-    %\path [line,dashed] (expert) -- (init);
-    %\path [line,dashed] (system) -- (init);
-    %\path [line,dashed] (system) |- (evaluate);
+    
+    %class labels
+    \path (method.south)+(-0.8,-0.4) node (Class) {Main Class};
+    %\path (dummy2.south)+(-0.4,-0.4) node (CClass) {CustomClass};
+
+    %background shapes 
+    \begin{pgfonlayer}{background}
+        %Main Class
+        \path (1.west |- 1.north)+(-0.2,0.2) node (a) {};
+        \path (method.south -| 1.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %CustomClass
+        \path (CC.west |- CC.north)+(-0.2,0.2) node (a) {};
+        \path (dummy2.south -| CC.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+    \end{pgfonlayer}   
+    
+    %curved arrows
+    \begin{scope}[looseness=1.6]
+        \path [draw, ->] (3) edge[out=180,in=180,->]  node [right] {} (method);
+    \end{scope} 
+    
 \end{tikzpicture}
-\end{center}
+}
 
 \subsubsection{Tables}
+We present here two possible version of tables. The first one show the case in which the constructor is \emph{UNSAFE}.
 \begin{align*}
 \begin{tabular}{|l|*{2}{c|}}
   \hline
   n & gen & kill  \\
   \hline 
-  3 & $\{y \}$ & \\ 
-  2 & $\{y, x\}$ & \\
-  1 &  & $\{x\}$ \\
+  3 & \{y \} & \\ 
+  2 & \{y, x\} & \\
+  1 &  & \{x\} \\
   \hline
 \end{tabular}
 \qquad
 \begin{tabular}{|l|*{2}{c|}}
   \hline
-  n & exit & entry  \\
+  n & entry & exit \\
   \hline 
-  3 &  & \\ 
-  2 &  &\\
-  1 &  & \\
+  3 & \{y \} & \\ 
+  2 & \{y, x\} & \{y \}\\
+  1 & \{y, x\} & \{y, x\} \\
+  \hline
+\end{tabular}
+\end{align*}
+
+While the second one show the case in which the constructor is \emph{SAFE}. As we can see in the tables below, the variables under suspicion are killed and the application is considered \emph{SAFE}.
+\begin{align*}
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & gen & kill  \\
+  \hline 
+  3 & \{y \} & \\ 
+  2 & \{y, x\} & \\
+  1 &  & \{x, y\} \\
+  \hline
+\end{tabular}
+\qquad
+\begin{tabular}{|l|*{2}{c|}}
+  \hline
+  n & entry & exit \\
+  \hline 
+  3 & \{y \} & \\ 
+  2 & \{y, x\} & \{y \}\\
+  1 &  & \{y, x\} \\
   \hline
 \end{tabular}
 \end{align*}
