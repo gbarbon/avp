@@ -202,7 +202,14 @@ As we have just seen, primitive variables and objects have different behaviour i
 
 \subsection{CCFG: Class Control Flow Graph~\cite{CCFG}}
 \paragraph{}
-Blabla
+For the construction of our Control Flow Graph, we must use a different technique in object-oriented language with respect to an imperative language. This is due to the fact that in the object-oriented language is the ability to use multiple classes within the same application, and then with our graph must be able to represent the application in its entirety, including the relationship between the various classes given by method calls.\\
+Has been developed an algorithm that allows the construction of CCFG of application, considering also the relationships between the various classes. The algorithm consists of four steps:
+\begin{itemize}
+\item The first step is to create the CFG of the class in question. 
+\item In the second step, however, for each method inside the class, the class of the method is added to ours, and we are replacing the node that contains the method invocation, with the corresponding CFG. This operation continues until they were covered all the methods contained within the application, including those present in the interior of the classes that are added in the course of work.  
+\item In the third stepo is made ​​the update of the various edges of CCFG so that they are connected in an appropriate manner on all sides.
+\item In the fourth step, the final, once finished all the above steps, it returns the CCFG application.
+\end{itemize}
 
 \subsubsection{CCFG Constructor Algorithm}
 \lstset{basicstyle=\small\ttfamily, tabsize=2}
@@ -214,8 +221,8 @@ output: G a CCFG of C
 begin ConstructCCFG
 	
 	/* Step1: Construct the class call 
-	graph for the class */ 
-	 G = Construct the class call graph of G
+	graph for the class C*/ 
+	 G = Construct the CFG of C
 	  
 	/* Step2: Replace each call graph node 
 	with the corresponding CFG */
@@ -235,6 +242,8 @@ end ConstructCCFG
 \end{lstlisting}
 
 \subsection{Safeness Analysis Algorithm}
+\paragraph{}
+The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2:\\
 
 \texttt{for each n \\
     in[n]:={ }; out[n]:={ } \\
