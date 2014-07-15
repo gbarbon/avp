@@ -217,7 +217,7 @@ Has been developed an algorithm that allows the construction of CCFG of applicat
 \begin{itemize}
 \item The first step is to create the CFG of the class in question. 
 \item In the second step, however, for each method inside the class, the class of the method is added to ours, and we are replacing the node that contains the method invocation, with the corresponding CFG. This operation continues until they were covered all the methods contained within the application, including those present in the interior of the classes that are added in the course of work.  
-\item In the third stepo is made ​​the update of the various edges of CCFG so that they are connected in an appropriate manner on all sides.
+\item In the third step is made the update of the various edges of CCFG so that they are connected in an appropriate manner on all sides.
 \item In the fourth step, the final, once finished all the above steps, it returns the CCFG application.
 \end{itemize}
 
@@ -254,15 +254,16 @@ end ConstructCCFG
 \subsection{Safeness Analysis Algorithm}
 \paragraph{}
 The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2:\\
-
-\texttt{for each n \\
-    in[n]:={ }; out[n]:={ } \\
-repeat \\
-    for each n \\
-    in’[n]:=in[n]; out’[n]:=out[n] \\
-        in[n] := use[n]}$\cup$\texttt{(out[n]-def[n])\\
-        out[n]:=}
-        
+\\
+for each n\\
+in[n]:={ }; out[n]:={ };\\
+repeat\\
+for each n\\
+in'[n]:= in[n]; out'[n]:= out[n];\\
+in[n]:= use[n] $\cup$ (out[n]-def[n]);\\
+out[n]:= $\cup${in[m] | m $\in$ succ[n]};\\
+until(for each n: in'[n]= in[n] \&\& out'[n]= out[n])
+       
         
 
 
