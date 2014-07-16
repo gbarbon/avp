@@ -34,6 +34,7 @@
 \usepackage{tikz} % graph package
 \usepackage{supertabular} % table span multiple pages
 \usetikzlibrary{shapes,arrows}
+\usepackage{courier}
 
 %\usepackage{sectsty} % Allows customizing section commands
 %\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -253,17 +254,19 @@ end ConstructCCFG
 
 \subsection{Safeness Analysis Algorithm}
 \paragraph{}
-The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2:\\
-\\
+The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2:
+\begin{tabbing}
+% fissiamo le posizioni dei tab
+~ \hspace{0.2cm} \= ~ \hspace{0.4cm} \= ~ \hspace{0.6cm} \= \\
 for each n\\
-in[n]:={ }; out[n]:={ };\\
+\> in[n]:={ }; out[n]:={ };\\
 repeat\\
-for each n\\
-in'[n]:= in[n]; out'[n]:= out[n];\\
-in[n]:= use[n] $\cup$ (out[n]-def[n]);\\
-out[n]:= $\cup${in[m] | m $\in$ succ[n]};\\
+\> for each n\\
+\>\> in'[n]:= in[n]; out'[n]:= out[n];\\
+\>\> in[n]:= use[n] $\cup$ (out[n]-def[n]);\\
+\>\> out[n]:= $\cup${in[m] | m $\in$ succ[n]};\\
 until(for each n: in'[n]= in[n] \&\& out'[n]= out[n])
-       
+\end{tabbing}    
         
 
 
@@ -603,8 +606,30 @@ This section will explore some specific features of the object oriented programm
 
 \subsection{Recursion}
 \paragraph{}
-Blabla
+The recursion are used when we can see that our problem can be reduced to a simpler problem that can be solved after further reduction.
 
+Every recursion should have the following characteristics.
+
+\begin{itemize}
+\item A simple base case which we have a solution for and a return value.
+\item A way of getting our problem closer to the base case. I.e. a way to chop out part of the problem to get a somewhat simpler problem.
+\item A recursive call which passes the simpler problem back into the method. 
+\end{itemize}
+
+Example:
+\begin{verbatim}
+void myMethod(int counter)
+{
+if(counter == 0)
+     return;
+else
+       {
+       System.out.println(""+counter);
+       myMethod(--counter);
+       return;
+       }
+}
+\end{verbatim}
 \subsection{Data Structures}
 \paragraph{}
 The data structures provided by the Java utility package are very powerful and perform a wide range of functions. These data structures consist of the following interface and classes:
