@@ -630,6 +630,9 @@ else
        }
 }
 \end{verbatim}
+In the case of recursion, our analysis works well and does not need to change, because once analyzed the code of the recursive method and seen if it is safe or not, there are no additional steps.\\
+Caution, however, must be made at the time of the construction of CCFG, because in the case of recursion, the control flow graph of the method must occur only once, aggiungengo me an edge that creates the cycle, without having to replicate the CFG for each call, because analyzed once does not need to repeat the analysis, thus avoiding the possibility of incurring an infinite replication, or otherwise avoid having a CCFG of large dimensions that in the end would be too heavy and useless.
+
 \subsection{Data Structures}
 \paragraph{}
 The data structures provided by the Java utility package are very powerful and perform a wide range of functions. These data structures consist of the following interface and classes:
@@ -643,6 +646,8 @@ The data structures provided by the Java utility package are very powerful and p
 \item \textbf{Hashtable:} The Hashtable class provides a means of organizing data based on some user-defined key structure.
 \item \textbf{Properties:} Properties is a subclass of Hashtable. It is used to maintain lists of values in which the key is a String and the value is also a String.
 \end{itemize}
+
+The safeness Analysis in Data Structures should only pay attention to the methods applied to the various elements of the structure, and verify that they are safe or not, so as applies to simple variables / objects, it works in the same way for the elements of a data structure.
 
 
 \subsection{Exception Handling}
