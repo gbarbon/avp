@@ -658,10 +658,46 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
 This section will explore some specific features of the object oriented programming languages applied to our analysis, in order to see whether it works or it should be expanded. When necessary and possible, we propose a solution to extend the analysis to these feature. Descriptions may make use of examples with the basic pseudocode already used in section 3, expanded with the required object oriented features.
 
 \subsection{Interfaces} \paragraph{}
+An interface is used in an object oriented language in order to specify a set of methods that classes must implements. In example, we can have the following interface:
+\begin{verbatim}
+public interface InterfaceI {
+    int commonMethod();
+}
+\end{verbatim}
+It declares a method that will be used by classes that will implement this interface, i.e. classes A and B, that must implement the method. Notice that the interface only states the method signature. In this way, all classes can implement the method in a different way, and another class that uses both classes A and B, will use only one method (and it can also use one type for both, the one of the interface).\\
+Graphically, we will obtain this structure:
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, align=left]
+\tikzstyle{line} = [draw, -latex']
+\begin{center}
+\begin{tikzpicture}[node distance = 1cm, auto]
+    % Place nodes
+    \node [] (X) {};
+    \node [block, right of=X, node distance = 2cm] (A) {Class A};
+    \node [block, right of=A, node distance = 2cm] (B) {Class B};
+    \node [block, below of=X, node distance = 2cm] (C) {Class C};
+    \node [block, right of=C, node distance = 3cm] (I) {\flqq Interface\frqq\\  \ InterfaceI };
+    
+    % Draw edges
+    \draw[->,>=open triangle 90,dashed]
+           (A) -- (I)
+       node[pos=0.1,anchor=south] {};
+   \draw[->,>=open triangle 90,dashed]
+           (B) -- (I)
+       node[pos=0.1,anchor=south] {};
+    \draw[->,dashed]
+           (C) -- (I)
+       node[anchor=east] {};
+    
+\end{tikzpicture}
+\end{center}
+
+
 \subsubsection{Polymorphism} \paragraph{}
-In languages similar to Java a problem appears when more than one class implement the same interface. In this case, it seems difficult to choose the right method (declared in the interface) for a given object. This circumstance is related to a principle called Polymorphism. Applied to interfaces, this concept states that the real type of an object can determine the correct method to call.
+In languages similar to Java a problem appears when more than one class implement the same interface. In this case, it seems difficult to choose the right method (declared in the interface) for a given object. This circumstance is related to a principle called \emph{polymorphism}. Applied to interfaces, this concept states that the real type of an object can determine the correct method to call.\\
+As for our analysis, it can be difficult to face this behaviour. Java does not solve it at compiling time, but only at execution time, by choosing the correct method using the \emph{late binding}~\cite{Horstmann:2008:BJ:1796502}.
 \subsubsection{Overloading}
-In object oriented programming we have principle similar to the Polymorphism, called constructor and method overloading. It consists into functions with same name but different parameters, that are invoked depending on the type of the parameters. Anyway, for us this is easier to face. Indeed, problems may only arise in the selection of the correct method during the construction of the CCFG. The CCFG algorithm must thus choose the right method by looking at its signature. 
+In object oriented programming we have principle similar to the polymorphism, called constructor and method overloading. It consists into functions with same name but different parameters, that are invoked depending on the type of the parameters. Anyway, for us this is easier to face than polymorphism. Indeed, problems may only arise in the selection of the correct method during the construction of the CCFG. The CCFG algorithm must thus choose the right method by looking at its signature. 
 
 
 
