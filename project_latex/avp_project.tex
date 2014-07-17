@@ -254,18 +254,19 @@ end ConstructCCFG
 
 \subsection{Safeness Analysis Algorithm}
 \paragraph{}
-The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2:
+The following shows the algorithm used to make the safeness analisys, which was derived from the equations introduced in Section 2.2, and apply to the CCFG of the application:
 \begin{tabbing}
 % fissiamo le posizioni dei tab
 ~ \hspace{0.2cm} \= ~ \hspace{0.4cm} \= ~ \hspace{0.6cm} \= \\
-for each n\\
-\> in[n]:=\{ \}; out[n]:=\{ \};\\
-repeat\\
-\> for each n\\
-\>\> in'[n]:= in[n]; out'[n]:= out[n];\\
+\textbf{for each} node n in CCFG\\
+\> in[n]:= $\emptyset$; out[n]:= $\emptyset$;\\
+\textbf{repeat}\\
+\> \textbf{for each} node n in CCFG \textbf{in reverse topsort order}\\
+\>\> in'[n]:= in[n]; \\
+\>\> out'[n]:= out[n]; \\
 \>\> out[n]:= $\cup$\{in[m] | m $\in$ succ[n]\};\\
 \>\> in[n]:= gen[n] $\cup$ (out[n]-kill[n]);\\
-until(for each n: in'[n]= in[n] \&\& out'[n]= out[n])
+\textbf{until} (in'[n]= in[n] \&\& out'[n]= out[n] for all n)
 \end{tabbing}    
         
 
@@ -630,6 +631,7 @@ else
        }
 }
 \end{verbatim}
+
 In the case of recursion, our analysis works well and does not need to change, because once analyzed the code of the recursive method and seen if it is safe or not, there are no additional steps.\\
 Caution, however, must be made at the time of the construction of CCFG, because in the case of recursion, the control flow graph of the method must occur only once, aggiungengo me an edge that creates the cycle, without having to replicate the CFG for each call, because analyzed once does not need to repeat the analysis, thus avoiding the possibility of incurring an infinite replication, or otherwise avoid having a CCFG of large dimensions that in the end would be too heavy and useless.
 
