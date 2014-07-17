@@ -259,12 +259,12 @@ The following shows the algorithm used to make the safeness analisys, which was 
 % fissiamo le posizioni dei tab
 ~ \hspace{0.2cm} \= ~ \hspace{0.4cm} \= ~ \hspace{0.6cm} \= \\
 for each n\\
-\> in[n]:={ }; out[n]:={ };\\
+\> in[n]:=\{ \}; out[n]:=\{ \};\\
 repeat\\
 \> for each n\\
 \>\> in'[n]:= in[n]; out'[n]:= out[n];\\
-\>\> in[n]:= use[n] $\cup$ (out[n]-def[n]);\\
-\>\> out[n]:= $\cup${in[m] | m $\in$ succ[n]};\\
+\>\> out[n]:= $\cup$\{in[m] | m $\in$ succ[n]\};\\
+\>\> in[n]:= gen[n] $\cup$ (out[n]-kill[n]);\\
 until(for each n: in'[n]= in[n] \&\& out'[n]= out[n])
 \end{tabbing}    
         
