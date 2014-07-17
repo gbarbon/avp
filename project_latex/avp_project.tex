@@ -281,165 +281,6 @@ The following shows the algorithm used to make the safeness analisys, which was 
 We now apply our analysis to some examples written with the proposed simple version of an object oriented programming language.
 
 \subsection{Example 1}
-\paragraph{}
-In this example we will see a very simple application that uses two class.
-\subsubsection{Code}
-
-\begin{verbatim}
-. class MClass{
-.
-1     void main (String[] args) {	    
-2         Text t	 = new Text("Hello!");
-3         exportMethod(t);
-.     }
-.
-4     void exportMethod(Text t) {        
-5         ...
-.         //this method exports 
-.         //confidential values
-.     }
-. }
-\end{verbatim}
-
-\noindent We now have to consider Text class:
-\begin{verbatim}
-. class Text {
-1     string s;
-.	
-2     Text(string b) { 	//constructor
-3         string c	 = confidentialMethod();
-4         this.s = b;
-5         this.s = this.s + c;
-.     }
-.	
-6     string confidentialMethod(){ 
-.         //method with confidential values
-7         string confidentialVariable;		
-8         return confidentialVariable;
-.     }
-. }
-\end{verbatim}
-
-%\subsection{Dumb example}
-%{\tt \small
-%\begin{verbatim}
-%...
-%Text t	= new Text(confidentialText);
-%...
-%\end{verbatim}
-%}
-%But we also need to consider Text class: \\
-%
-%\begin{verbatim}
-%class Text {
-%    string s;	//class variable
-%	
-%    Text(string b) { 	//constructor
-%        this.s = b;
-%    }
-%}
-%\end{verbatim}
-%
-%In this example it is easy to see that the object t contains confidential datas.\\
-
-\subsubsection{Description}
-\paragraph{}
-By only looking at \emph{MClass} object \emph{t} seems to be not confidential. Anyway, we must investigate also \emph{Text} class, because the constructor may contains methods that create confidential data in the new object. In order to do this, we can expand the CCFG of the \emph{text} constructor. In this way, we will see that the constructor makes use of \emph{ConfidentialMethod}, a method that generates confidential data. So, the object \emph{t} will be considered \emph{UNSAFE} and consequently also the application will be believed as \emph{UNSAFE}.
-
-\subsubsection{CCFG}
-
-% We need layers to draw the block diagram
-\pgfdeclarelayer{background}
-\pgfdeclarelayer{foreground}
-\pgfsetlayers{background,main,foreground}
-
-% Define block styles
-\tikzstyle{block} = [rectangle, draw, align=left]
-\tikzstyle{line} = [draw, -latex']
-\tikzstyle{every node}=[font=\footnotesize]
-\scalebox{0.85}{
-\begin{tikzpicture}[node distance = 2cm, auto][every node/.style={inner sep=0,outer sep=0}]
-    % Place nodes
-    \node [block] (MC1) {void main (String[] args) \{ \\    Text t = new Text("Hello!");\\     exportMethod(t);\\ \} };
-    \node [block, below of=MC1] (MC2){void exportMethod(Text t) \{ \\ ... \\ \} };
-    \node [block, right of=MC2, node distance=5cm] (T1) {Text(string b) \{\\ string c = confidentialMethod(); \\ this.s = b; \\ this.s = this.s + c; \\ \} };
-    \node [block, below of=T1] (T2) {string confidentialMethod()\{ \\ string confidentialVariable; \\ return confidentialVariable;\\ \} };
-    
-    % Draw edges
-    \path [line] (MC1) -- (MC2);
-    \path [line] (T1) -- (T2);
-    
-    %class labels
-    \path (MC2.south)+(-0.4,-0.4) node (MClass) {MClass Class};
-    \path (T2.south)+(-0.4,-0.4) node (Text) {Text Class};
-
-    %background shapes 
-    \begin{pgfonlayer}{background}
-        %MClass class
-        \path (MC1.west |- MC1.north)+(-0.2,0.2) node (a) {};
-        \path (MC2.south -| MC1.east)+(0.2,-0.2) node (b) {};
-        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
-        %Text class                
-        \path (T1.west |- T1.north)+(-0.2,0.2) node (a) {};
-        \path (T2.south -| T1.east)+(0.2,-0.2) node (b) {};
-        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
-    \end{pgfonlayer}   
-    
-    %curved arrows
-    \begin{scope}[looseness=1.6]
-        \path [draw, ->] (MC1) edge[out=0,in=90,->]  node [right] {} (T1);
-        \path [draw, ->] (T1) edge[out=180,in=0,->]  node [right] {} (MC1);
-        %\path [draw, ->] (T2) edge[out=270,in=0,->]  node [right] {} (T1);
-        %\path [draw, ->] (MC1) edge[out=270,in=180,->]  node [right] {} (MC1);
-    \end{scope} 
-    
-\end{tikzpicture}
-}
-
-\subsubsection{Tables}
-\begin{center}
-\begin{supertabular}{|l|*{3}{c|}}
-  \hline
-  n & classname & gen & kill  \\
-  \hline 
-  3 & MClass & \{t,,3, MClass\} & \\ 
-  2 & MClass & - & - \\
-  5 & Text & \{t,t[c],5, Text\} & \\
-  4 & Text & \{t,t[c,b],4, Text\} & \\
-  3 & Text & - & - \\
-  8 & Text &  & \\
-  7 & Text &  & \\
-  6 & Text &  & \\
-  3 & Text &  & \\
-  2 & Text &  & \\
-  2 & MClass &  & \{b,2,MClass\}\\
-  1 & MClass &  & \\
-  \hline
-\end{supertabular}
-\end{center}
-\begin{center}
-\begin{supertabular}{|l|*{3}{c|}}
-  \hline
-  n & classname & entry & exit  \\
-  \hline 
-  3 & MClass & \{t\} &  \\ 
-  2 & MClass & - & -\\
-  5 & Text & \{t, c\} & \{t\} \\
-  4 & Text & \{t, c, b\} & \{t, c\} \\
-  3 & Text & - & - \\
-  8 & Text & \{t, c, b\} & \{t, c, b\}    \\
-  7 & Text & \{t, c, b\} & \{t, c, b\}    \\
-  6 & Text & \{t, c, b\} & \{t, c, b\}    \\
-  3 & Text & \{t, c, b\} & \{t, c, b\}    \\
-  2 & Text & \{t, c, b\} & \{t, c, b\}    \\
-  2 & MClass & \{t, c\} & \{t, c, b\}    \\
-  1 & MClass & \{t, c\} & \{t, c\}    \\
-  \hline
-\end{supertabular}
-\end{center}
-
-
-\subsection{Example 2}
 
 \subsubsection{Code}
 \begin{verbatim}
@@ -587,6 +428,220 @@ While the second one show the case in which the constructor is \emph{SAFE}. As w
   \hline
 \end{tabular}
 \end{align*}
+
+\subsection{Example 2}
+\paragraph{}
+In this example we will see a very simple application that uses two class.
+\subsubsection{Code}
+
+\begin{verbatim}
+. class MClass{
+.
+1     void main (String[] args) {	    
+2         Text t = new Text("Hello!");
+3         exportMethod(t);
+.     }
+.
+4     void exportMethod(Text t) {        
+5         ...
+.         //this method exports 
+.         //confidential values
+.     }
+. }
+\end{verbatim}
+
+\noindent We now have to consider Text class:
+\begin{verbatim}
+. class Text {
+1     string s;
+.	
+2     Text(string b) { 	//constructor
+3         string c = confidentialMethod();
+4         this.s = b;
+5         this.s = this.s + c;
+.     }
+.	
+6     string confidentialMethod(){ 
+.         //creates confidential values
+7         string confidentialVariable;		
+8         return confidentialVariable;
+.     }
+. }
+\end{verbatim}
+
+%\subsection{Dumb example}
+%{\tt \small
+%\begin{verbatim}
+%...
+%Text t	= new Text(confidentialText);
+%...
+%\end{verbatim}
+%}
+%But we also need to consider Text class: \\
+%
+%\begin{verbatim}
+%class Text {
+%    string s;	//class variable
+%	
+%    Text(string b) { 	//constructor
+%        this.s = b;
+%    }
+%}
+%\end{verbatim}
+%
+%In this example it is easy to see that the object t contains confidential datas.\\
+
+\subsubsection{Description}
+\paragraph{}
+By only looking at \emph{MClass} object \emph{t} seems to be not confidential. Anyway, we must investigate also \emph{Text} class, because the constructor may contains methods that create confidential data in the new object. In order to do this, we can expand the CCFG of the \emph{text} constructor. In this way, we will see that the constructor makes use of \emph{ConfidentialMethod}, a method that generates confidential data. So, the object \emph{t} will be considered \emph{UNSAFE} and consequently also the application will be believed as \emph{UNSAFE}.
+
+\subsubsection{CCFG}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, align=left]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{every node}=[font=\footnotesize]
+%\scalebox{0.85}{
+%\begin{tikzpicture}[node distance = 2cm, auto][every node/.style={inner sep=0,outer sep=0}]
+%    % Place nodes
+%    \node [block] (MC1) {void main (String[] args) \{ \\    Text t = new Text("Hello!");\\     exportMethod(t);\\ \} };
+%    \node [block, below of=MC1] (MC2){void exportMethod(Text t) \{ \\ ... \\ \} };
+%    \node [block, right of=MC2, node distance=5cm] (T1) {Text(string b) \{\\ string c = confidentialMethod(); \\ this.s = b; \\ this.s = this.s + c; \\ \} };
+%    \node [block, below of=T1] (T2) {string confidentialMethod()\{ \\ string confidentialVariable; \\ return confidentialVariable;\\ \} };
+%    
+%    % Draw edges
+%    \path [line] (MC1) -- (MC2);
+%    \path [line] (T1) -- (T2);
+%    
+%    %class labels
+%    \path (MC2.south)+(-0.4,-0.4) node (MClass) {MClass Class};
+%    \path (T2.south)+(-0.4,-0.4) node (Text) {Text Class};
+%
+%    %background shapes 
+%    \begin{pgfonlayer}{background}
+%        %MClass class
+%        \path (MC1.west |- MC1.north)+(-0.2,0.2) node (a) {};
+%        \path (MC2.south -| MC1.east)+(0.2,-0.2) node (b) {};
+%        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+%        %Text class                
+%        \path (T1.west |- T1.north)+(-0.2,0.2) node (a) {};
+%        \path (T2.south -| T1.east)+(0.2,-0.2) node (b) {};
+%        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+%    \end{pgfonlayer}   
+%    
+%    %curved arrows
+%    \begin{scope}[looseness=1.6]
+%        \path [draw, ->] (MC1) edge[out=0,in=90,->]  node [right] {} (T1);
+%        \path [draw, ->] (T1) edge[out=180,in=0,->]  node [right] {} (MC1);
+%        %\path [draw, ->] (T2) edge[out=270,in=0,->]  node [right] {} (T1);
+%        %\path [draw, ->] (MC1) edge[out=270,in=180,->]  node [right] {} (MC1);
+%    \end{scope} 
+%    
+%\end{tikzpicture}
+%}
+
+\hspace*{-7mm}\scalebox{0.85}{
+\begin{tikzpicture}[node distance = 1cm, auto][every node/.style={inner sep=0,outer sep=0}]
+
+    % MClass nodes
+    \node [block] (MC1) {void main (String[] args) \{ };
+    \node [block, below of=MC1] (MC2) {Text t = new Text("Hello!");};
+    \node [block, below of=MC2] (MC3) {exportMethod(t);\} };
+    \node [block, below of=MC3, node distance=4em] (MC4) {void exportMethod(Text t) \{ };
+    \node [block, below of=MC4] (MC5) {...(content of exportMethod)...\} };
+    
+    % Text class nodes
+    \node [block, right of=MC2, node distance=5cm] (T1) {string s;};
+    \node [block, below of=T1, node distance=4em] (T2) {Text(string b) \{ };
+    \node [block, below of=T2] (T3) {string c = confidentialMethod();};
+    \node [block, below of=T3] (T4) {this.s = b; };
+    \node [block, below of=T4] (T5) {this.s = this.s + c; \} };
+    \node [block, below of=T5, node distance=4em] (T6) {string confidentialMethod()\{ };
+    \node [block, below of=T6] (T7) {string confidentialVariable; };
+    \node [block, below of=T7] (T8) {return confidentialVariable;\} };
+    
+    % Draw arrows between blocks internal to classes
+    \path [line] (MC1) -- (MC2);
+    \path [line] (MC2) -- (MC3);
+    \path [line] (MC4) -- (MC5);    
+    \path [line] (T2) -- (T3);
+    \path [line] (T3) -- (T4);
+    \path [line] (T4) -- (T5);
+    \path [line] (T6) -- (T7);
+    \path [line] (T7) -- (T8);
+    
+    %class labels
+    \path (MC5.south)+(-0.4,-0.4) node (MClass) {MClass Class};
+    \path (T8.south)+(-0.4,-0.4) node (Text) {Text Class};
+
+    %background shapes 
+    \begin{pgfonlayer}{background}
+        %MClass class
+        \path (MC5.west |- MC1.north)+(-0.2,0.2) node (a) {};
+        \path (MC5.south -| MC5.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %Text class                
+        \path (T3.west |- T1.north)+(-0.2,0.2) node (a) {};
+        \path (T8.south -| T3.east)+(0.2,-0.2) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+    \end{pgfonlayer}   
+    
+    %curved arrows
+    \begin{scope}[looseness=1.8]
+        \path [draw, ->] (MC3) edge[out=180,in=180,->]  node [left] {} (MC4);
+        \path [draw, ->] (MC2) edge[out=0,in=180,->]  node [right] {} (T2);
+        \path [draw, ->] (T2) edge[out=180,in=180,->, bend right=73]  node [left] {} (T6);
+    \end{scope} 
+    
+\end{tikzpicture}
+}
+
+\subsubsection{Tables}
+\begin{center}
+\begin{supertabular}{|l|*{3}{c|}}
+  \hline
+  n & classname & gen & kill  \\
+  \hline 
+  3 & MClass & \{t,,3, MClass\} & \\ 
+  %2 & MClass & - & - \\
+  5 & Text & \{t,t[c],5, Text\} & \\
+  4 & Text & \{t,t[c,b],4, Text\} & \\
+  %3 & Text & - & - \\
+  8 & Text &  & \\
+  7 & Text &  & \\
+  6 & Text &  & \\
+  3 & Text &  & \\
+  2 & Text &  & \\
+  2 & MClass &  & \{b,2,MClass\}\\
+  1 & MClass &  & \\
+  \hline
+\end{supertabular}
+\end{center}
+\begin{center}
+\begin{supertabular}{|l|*{3}{c|}}
+  \hline
+  n & classname & entry & exit  \\
+  \hline 
+  3 & MClass & \{t\} &  \\ 
+  %2 & MClass & - & -\\
+  5 & Text & \{t, c\} & \{t\} \\
+  4 & Text & \{t, c, b\} & \{t, c\} \\
+  %3 & Text & - & - \\
+  8 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  7 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  6 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  3 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  2 & Text & \{t, c, b\} & \{t, c, b\}    \\
+  2 & MClass & \{t, c\} & \{t, c, b\}    \\
+  1 & MClass & \{t, c\} & \{t, c\}    \\
+  \hline
+\end{supertabular}
+\end{center}
 
 %----------------------------------------------------------------------------------------
 %	4. Issues with a real Object Oriented Language
