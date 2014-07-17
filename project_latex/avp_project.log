@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  17 JUL 2014 23:51
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  18 JUL 2014 01:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -785,7 +785,7 @@ Overfull \hbox (6.35861pt too wide) in paragraph at lines 242--244
  []
 
 
-Overfull \hbox (8.15625pt too wide) in paragraph at lines 290--290
+Overfull \hbox (8.15625pt too wide) in paragraph at lines 294--294
 []\T1/pcr/m/n/10 1    CustomClass x = new CustomClass();[] 
  []
 
@@ -834,27 +834,27 @@ Missing character: There is no = in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no ] in font nullfont!
 [4]
-Overfull \hbox (2.15625pt too wide) in paragraph at lines 451--451
+Overfull \hbox (2.15625pt too wide) in paragraph at lines 455--455
 []\T1/pcr/m/n/10 2         Text t = new Text("Hello!");[] 
  []
 
 
-Overfull \hbox (26.15625pt too wide) in paragraph at lines 470--470
+Overfull \hbox (26.15625pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 3         string c = confidentialMethod();[] 
  []
 
 
-Overfull \hbox (8.15625pt too wide) in paragraph at lines 470--470
+Overfull \hbox (8.15625pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 .         //creates confidential values[] 
  []
 
 
-Overfull \hbox (2.15625pt too wide) in paragraph at lines 470--470
+Overfull \hbox (2.15625pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 7         string confidentialVariable;[] 
  []
 
 
-Overfull \hbox (2.15625pt too wide) in paragraph at lines 470--470
+Overfull \hbox (2.15625pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 8         return confidentialVariable;[] 
  []
 
@@ -903,12 +903,15 @@ Missing character: There is no = in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no ] in font nullfont!
 
-Overfull \hbox (1.86378pt too wide) in paragraph at lines 548--603
+Overfull \hbox (1.86378pt too wide) in paragraph at lines 552--607
 | [] 
  []
 
-[5]
-Overfull \hbox (2.15625pt too wide) in paragraph at lines 688--688
+
+Underfull \vbox (badness 1552) has occurred while \output is active []
+
+ [5]
+Overfull \hbox (2.15625pt too wide) in paragraph at lines 700--700
 []       \T1/pcr/m/n/10 System.out.println(""+counter);[] 
  []
 
@@ -919,7 +922,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 Here is how much of TeX's memory you used:
  14872 strings out of 493315
  287660 string characters out of 6137904
- 387620 words of memory out of 5000000
+ 389651 words of memory out of 5000000
  17963 multiletter control sequences out of 15000+600000
  79795 words of font info for 135 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -934,7 +937,7 @@ r10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
 al/texlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive
 /2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texm
 f-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (7 pages, 133509 bytes).
+Output written on avp_project.pdf (7 pages, 133908 bytes).
 PDF statistics:
  68 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream
