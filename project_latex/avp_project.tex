@@ -725,8 +725,42 @@ In object oriented programming we have principle similar to the polymorphism, ca
 Inner classes are classes declared and implemented internally to another one. As for our analysis, everything is solved during the execution of the CCFG algorithm by expanding the used methods in a way similar to normal classes. 
 
 \subsection{Inheritance} \paragraph{}
+In object oriented progrogramming language, classes can be derived from other classes, thereby inheriting fields and methods from those classes.
+
+A class that is derived from another class is called a subclass (also a derived class, extended class, or child class). The class from which the subclass is derived is called a superclass (also a base class or a parent class).
+
+Classes can be derived from classes that are derived from classes that are derived from classes, and so on, and ultimately derived from the topmost class, Object. Such a class is said to be descended from all the classes in the inheritance chain stretching back to Object.
+The idea of inheritance is simple but powerful: When you want to create a new class and there is already a class that includes some of the code that you want, you can derive your new class from the existing class. In doing this, you can reuse the fields and methods of the existing class without having to write (and debug!) them yourself.
+
+A subclass inherits all the members (fields, methods, and nested classes) from its superclass. Constructors are not members, so they are not inherited by subclasses, but the constructor of the superclass can be invoked from the subclass.
+
+In our analysis, when we find a object belongs to a subclass, we know that it can be used also the method of the superclass and we have to pay attention because they can be export the confidential information.
+
 \subsubsection{Polymorphism} \paragraph{}
+Polymorphism is the ability of an object to take on many forms. The most common use of polymorphism in OOP occurs when a parent class reference is used to refer to a child class object.
+
+It is important to know that the only possible way to access an object is through a reference variable. A reference variable can be of only one type. Once declared, the type of a reference variable cannot be changed.
+
+The reference variable can be reassigned to other objects provided that it is not declared final. The type of the reference variable would determine the methods that it can invoke on the object.
+
+A reference variable can refer to any object of its declared type or any subtype of its declared type. A reference variable can be declared as a class or interface type. For this reason if we don't know the real type of the object we don't know which method use if there is an overriding of a method.
+
+In our analysis when we find a call to a method of an object we have to know if the method is a method of that object class or it is a superclass method. This information is given only when we find the definition of the object. Up to this point we do not know which method is refer the call. 
+
+Until the information is unknown, the object is insert in the list of the unsafe variable with the possible another variable used in the call of the method. When we know the class membership then we expand the method using the CCFG and we search if the method export the variable. In the case in which the method doesn't export variables, we eliminate the variable from the list. If inside the function/procedure we find another class method, we apply this recorsively.
+
 \subsubsection{Overriding} \paragraph{}
+If a class inherits a method from its super class, then there is a chance to override the method provided that it is not marked final.
+
+The benefit of overriding is: ability to define a behavior that's specific to the subclass type which means a subclass can implement a parent class method based on its requirement.
+
+In object-oriented terms, overriding means to override the functionality of an existing method.
+
+In our analysis when we find a call of a object's method override or not, we have to expand the method using CCFG and look for if the method in such way exports confidential informations. Thus when we find a method, we put inside the list of the unsafe variable the object and all the variable that are used by the method in the call. The element that will be inserted in the list will be like this:
+\begin{verbatim}
+   [ name_object, var_method, ...]
+\end{verbatim} 
+where the point can indicate that in the method can be called other method. So, there are no differences between the idea used for overriding method or not.
 
 \subsection{Recursion}
 \paragraph{}
