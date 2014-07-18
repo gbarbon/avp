@@ -692,17 +692,26 @@ Graphically, we will obtain this structure:
 \end{tikzpicture}
 \end{center}
 
-
 \subsubsection{Polymorphism} \paragraph{}
 In languages similar to Java a problem appears when more than one class implement the same interface. In this case, it seems difficult to choose the right method (declared in the interface) for a given object. This circumstance is related to a principle called \emph{polymorphism}. Applied to interfaces, this concept states that the real type of an object can determine the correct method to call.\\
-As for our analysis, it can be difficult to face this behaviour. Java does not solve it at compiling time, but only at execution time, by choosing the correct method using the \emph{late binding}~\cite{Horstmann:2008:BJ:1796502}.
+As for our analysis, it can be difficult to face this behaviour. Java does not solve it at compiling time, but only at execution time, by choosing the correct method using the \emph{late binding}~\cite{Horstmann:2008:BJ:1796502}. Let us take the previous example. Class C may do not want to know the correct type of an object, and use the interface type:
+\begin{verbatim}
+public class C {
+    InterfaceI x;
+    ...
+    x = new A();
+    x = new B();
+    ...
+    x.commonMethod();
+}
+\end{verbatim}
+What is the right implementation of commonMethod that we should use? The situation is simpler that one might think. Indeed, when the CCFG algorithm executes, it expands every method. If it runs into a variable with type of an interface, we know that sooner or later it will also find the correct constructor (the interface has no constructor). If we look at the examples, when we will meet \emph{new A()} or \emph{new B()} will expand the CCFG also for the constructor, thus knowing the correct type of the variable. At the end, when we will meet commonMethod(), we will know that it refers to the last constructor used, so we will use the implementation given by class B.
+
 \subsubsection{Overloading}
 In object oriented programming we have principle similar to the polymorphism, called constructor and method overloading. It consists into functions with same name but different parameters, that are invoked depending on the type of the parameters. Anyway, for us this is easier to face than polymorphism. Indeed, problems may only arise in the selection of the correct method during the construction of the CCFG. The CCFG algorithm must thus choose the right method by looking at its signature. 
 
-
-
-\subsubsection{Internal Classes} \paragraph{}
-
+\subsubsection{Inner Classes} \paragraph{}
+Inner classes are classes declared and implemented internally to another one. As for our analysis, everything is solved during the execution of the CCFG algorithm by expanding the used methods in a way similar to normal classes. 
 
 \subsection{Inheritance} \paragraph{}
 \subsubsection{Polymorphism} \paragraph{}
@@ -736,7 +745,7 @@ else
 \end{verbatim}
 
 In the case of recursion, our analysis works well and does not need to change, because once analyzed the code of the recursive method and seen if it is safe or not, there are no additional steps.\\
-Caution, however, must be made at the time of the construction of CCFG, because in the case of recursion, the control flow graph of the method must occur only once, aggiungengo me an edge that creates the cycle, without having to replicate the CFG for each call, because analyzed once does not need to repeat the analysis, thus avoiding the possibility of incurring an infinite replication, or otherwise avoid having a CCFG of large dimensions that in the end would be too heavy and useless.
+Caution, however, must be made at the time of the construction of CCFG, because in the case of recursion, the control flow graph of the method must occur only once, adding an edge that creates the cycle, without having to replicate the CFG for each call, because analyzed once does not need to repeat the analysis, thus avoiding the possibility of incurring an infinite replication, or otherwise avoid having a CCFG of large dimensions that in the end would be too heavy and useless.
 
 \subsection{Data Structures}
 \paragraph{}

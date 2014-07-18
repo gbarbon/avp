@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  18 JUL 2014 01:42
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  18 JUL 2014 02:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -912,7 +912,7 @@ Underfull \vbox (badness 1552) has occurred while \output is active []
 
  [5]
 [6]
-Overfull \hbox (2.15625pt too wide) in paragraph at lines 736--736
+Overfull \hbox (2.15625pt too wide) in paragraph at lines 745--745
 []       \T1/pcr/m/n/10 System.out.println(""+counter);[] 
  []
 
@@ -940,7 +940,7 @@ fb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr
 exlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/201
 3/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-di
 st/fonts/type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (8 pages, 136137 bytes).
+Output written on avp_project.pdf (8 pages, 137200 bytes).
 PDF statistics:
  71 PDF objects out of 1000 (max. 8388607)
  51 compressed objects within 1 object stream
