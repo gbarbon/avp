@@ -1,5 +1,11 @@
 \begin{thebibliography}{1}
 
+\bibitem{website:androiddev}
+{\sc {Android Open Source Project}}.
+\newblock {Android Developers}.
+\newblock \url{http://developer.android.com/}.
+\newblock Accessed: 2014-07-22.
+
 \bibitem{Burnette:2010:HAI:1893143}
 {\sc Burnette, E.}
 \newblock {\em Hello, Android: Introducing Google's Mobile Development

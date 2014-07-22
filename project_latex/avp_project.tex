@@ -35,6 +35,7 @@
 \usepackage{supertabular} % table span multiple pages
 \usetikzlibrary{shapes,arrows}
 \usepackage{courier}
+\usepackage{url} %for showing urls
 
 %\usepackage{sectsty} % Allows customizing section commands
 %\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -829,15 +830,20 @@ User applications are written in Java and run each in its JVM. Are developed wit
 
 \subsubsection{Android app peculiarities~\cite{Burnette:2010:HAI:1893143}}
 \paragraph{}
-Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. anyway, there are many other differences.\\ 
-Activity\\
-An Android app makes large use of xml files. The most important one is the AndroidManifest. This file is located into the root of an Android project and describe all the activities performed in the app. Moreover, it also define some constraints for the application which state the permissions. In example, a permission is needed to use location related methods and libraries. Other important xml files are the main.xml file in the layout directory, that describes objects containers and their behaviour on the screen, and the various variables files, like string.xml, that contains useful variables for the application.
-
-\subsection{Methods and data structure selection}
-\paragraph{}
-Blabla
+Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. anyway, there are many other differences.
+\begin{itemize}
+\item One of the main concepts in an Android program is the Activity. An activity is responsible for the application lifecycle. Every application can define more activities, one for each phase of its execution. Every activity have 5 states: starting, running, paused, stopped, destroyed. 
+\item Intents are used to describe specific actions. More formally, they are abstract descriptions of operations to be performed. They are used in the launch of an activity~\cite{website:androiddev}
+\item An Android app makes large use of xml files. The most important one is the AndroidManifest. This file is located into the root of an Android project and describe all the activities performed in the app. Moreover, it also define some constraints for the application which state the permissions. In example, a permission is needed to use location related methods and libraries.\\ Other important xml files are the main.xml file in the layout directory, that describes objects containers and their behaviour on the screen, and the various variables files, like string.xml, that contains useful variables for the application.
+\item R class is automatically created in each project and is used to link all the assets described in the xml files (layout, valuest, \ldots) to the other program classes.
+\end{itemize} 
 
 \subsection{Analysis adaptation to Android Environment}
+\paragraph{}
+Nota 1: each object created or modified by methods of a class that belongs to the Android libraries is considered SAFE. Anyway, methods that belong to an Android library but export data will cause a \emph{gen} step.\\
+Nota 2: if we encounter a method that exports confidential data, but this method is not allowed by the AndroidManifest, it will not cause a \emph{gen} step.
+
+\subsection{Methods and data structure selection}
 \paragraph{}
 Blabla
 
