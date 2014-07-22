@@ -827,6 +827,12 @@ The runtime environment of Android platform, consists instead of a core library 
 
 User applications are written in Java and run each in its JVM. Are developed with the integration of the package provided by the Android APIs that provide for interaction with the bluetooth, location or telephone, or for the management of the graphic interface and gestures, thus creating a layer of abstraction also on components hardware. Note that the distribution is not what Java ME is performed, but a version specially developed for Dalvik: Java code is compiled and translated it into byte code, then undergoes further processing in a file format called dex. This additional step allowed us to optimize the code for the JVM, and to disengage from legal problems with Oracle.
 
+\subsubsection{Android app peculiarities~\cite{Burnette:2010:HAI:1893143}}
+\paragraph{}
+Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. anyway, there are many other differences.\\ 
+Activity\\
+An Android app makes large use of xml files. The most important one is the AndroidManifest. This file is located into the root of an Android project and describe all the activities performed in the app. Moreover, it also define some constraints for the application which state the permissions. In example, a permission is needed to use location related methods and libraries. Other important xml files are the main.xml file in the layout directory, that describes objects containers and their behaviour on the screen, and the various variables files, like string.xml, that contains useful variables for the application.
+
 \subsection{Methods and data structure selection}
 \paragraph{}
 Blabla
