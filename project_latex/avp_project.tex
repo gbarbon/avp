@@ -955,7 +955,7 @@ The first step of our analysis is done analysing the file AVPtest which contains
 
 In the GeoLocation class, we can see that there are a new call to the costructor LocationUpdateHandler() using the method requestLocationUpdates(...). With that, the program has created a listener that, every time that the position changes, it starts the function LocationUpdateHandler() that use the implemented function onLocationChanged(...), for this reason we expand this function. Inside it we can see that there are no method which export confidential data. Using this information we can eliminate the variable associated to the method onLocationChanged(...) and requestLocationUpdates(...) from the list of possible unsafe variable.
 
-In the end of our analysis we obtain the expect result.
+In the end of our analysis we obtain the expected result.
 
 Instead, if we are interested to an unsafe application, we have to modify the point in the application in which the position is updated. In this point we can insert a simple command that send the current position of the device to a malicious user or save its position in a file and sends it later (we can see some examples of method that save the information in a file and share it with other users in the section 'Methods and data structure selection').
 
@@ -1054,15 +1054,28 @@ Instead, if we are interested to an unsafe application, we have to modify the po
   \hline
   n & classname & gen & kill  \\
   \hline 
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
+  5 & AVPtest & \{geoLocButton[this], 5, AVPtest\} & \\
+  11 & AVPtest &  & \\
+  10 & AVPtest &  & \\
+  9 & AVPtest & \{i[this], 9, AVPtest\} & \\
+  6 & GetLocation &  & \\
+  5 & GetLocation & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} & \\
+  5 & LocationUpdateHandler &  & \\
+  4 & LocationUpdateHandler &  & \\
+  3 & LocationUpdateHandler &  & \\
+  2 & LocationUpdateHandler &  & \\
+  1 & LocationUpdateHandler &  & \\
+  4 & GetLocation & & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} \\
+  3 & GetLocation & & \\
+  2 & GetLocation & & \\
+  1 & GetLocation & & \\
+  8 & AVPtest &  & \{i[this], 9, AVPtest\} \\
+  7 & AVPtest &  & \\
+  6 & AVPtest &  & \\
+  4 & AVPtest &  & \{geoLocButton[this], 5, AVPtest\} \\
+  3 & AVPtest &  & \\
+  2 & AVPtest &  & \\
+  1 & AVPtest &  & \\  
   \hline
 \end{tabular}
 \qquad \qquad
@@ -1070,15 +1083,28 @@ Instead, if we are interested to an unsafe application, we have to modify the po
   \hline
   n & classname & entry & exit  \\
   \hline 
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
-  n & NomeClasse &  & \\
+  5 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  11 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  10 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  9 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  6 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  5 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  5 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  4 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  3 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  2 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  1 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  4 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this]]\} \\
+  3 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  2 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  1 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  8 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this]\} \\
+  7 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  6 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  4 & AVPtest & \{geoLocButton[this]\} &  \\
+  3 & AVPtest &  & \\
+  2 & AVPtest &  & \\
+  1 & AVPtest &  & \\
   \hline
 \end{tabular}
 \end{align*}
