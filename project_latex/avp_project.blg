@@ -1,5 +1,48 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: avp_project.aux
+This is BibTeX, Version 0.99d (TeX Live 2013)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: avp_project.aux
 The style file: acm.bst
 Database file #1: biblio.bib
 Warning--empty year in CCFG
+You've used 5 entries,
+            2253 wiz_defined-function locations,
+            560 strings with 4615 characters,
+and the built_in function-call counts, 1240 in all, are:
+= -- 112
+> -- 50
+< -- 0
++ -- 21
+- -- 16
+* -- 69
+:= -- 219
+add.period$ -- 16
+call.type$ -- 5
+change.case$ -- 22
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 57
+empty$ -- 114
+format.name$ -- 16
+if$ -- 258
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 7
+newline$ -- 29
+num.names$ -- 10
+pop$ -- 38
+preamble$ -- 1
+purify$ -- 18
+quote$ -- 0
+skip$ -- 28
+stack$ -- 0
+substring$ -- 25
+swap$ -- 10
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 14
+warning$ -- 1
+while$ -- 10
+width$ -- 6
+write$ -- 57
 (There was 1 warning)

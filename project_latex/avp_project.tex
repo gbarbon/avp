@@ -840,13 +840,17 @@ Android app are different from a normal java application. First of all, they use
 
 \subsection{Analysis adaptation to Android Environment}
 \paragraph{}
-To be applied to an Android application to our analysis, needs some adaptation. First, given that Android apps not only use Java, but they also use the various libraries provided by Android, you have to classify such methods can be considered safe or not, and also in what situations they can still be considered safe or not.\\
-In Safeness Analysis are defined SAFE all those methods from the Android libraries that create and / or modify objects without sensitive data contained in these objects are exported. All methods that do not comply with this rule are considered UNSAFE and once collected by the SA generates a \emph{gen} step.\\
-We must, however, consider the case of applications that use sensitive data and the use was allowed on the part of the user during installation. As explained in the section above, all the activities of the app are contained inside of AndroidManifest, therefore, all the methods that can also export sensitive data, but that are contained inside of AndroidManifest must be considered SAFE, because they are part of the behavior "legal" of app. In the case where instead of our SA detects UNSAFE additional methods other than those covered by Manifest, this causes a \emph{gen} step, and thus detect any malicious behavior of the app.
+%To be applied to an Android application to our analysis, needs some adaptation. First, given that Android apps not only use Java, but they also use the various libraries provided by Android, you have to classify such methods can be considered safe or not, and also in what situations they can still be considered safe or not.\\
+%In Safeness Analysis are defined SAFE all those methods from the Android libraries that create and / or modify objects without sensitive data contained in these objects are exported. All methods that do not comply with this rule are considered UNSAFE and once collected by the SA generates a \emph{gen} step.\\
+%We must, however, consider the case of applications that use sensitive data and the use was allowed on the part of the user during installation. As explained in the section above, all the activities of the app are contained inside of AndroidManifest, therefore, all the methods that can also export sensitive data, but that are contained inside of AndroidManifest must be considered SAFE, because they are part of the behavior "legal" of app. In the case where instead of our SA detects UNSAFE additional methods other than those covered by Manifest, this causes a \emph{gen} step, and thus detect any malicious behavior of the app.
 
 %Nota 1: each object created or modified by methods of a class that belongs to the Android libraries is considered SAFE. Anyway, methods that belong to an Android library but export data will cause a \emph{gen} step.
 
 %Nota 2: if we encounter a method that exports confidential data, but this method is not allowed by the AndroidManifest, it will not cause a \emph{gen} step.
+
+Our analysis needs some adaptation in order to be Applied to Android applications. First, we must consider the various libraries provided by Android. In Safeness Analysis all methods that come from the Android libraries and create and/or modify objects are defined SAFE. All methods that do not comply with this rule, so methods that exports confidential data, are considered UNSAFE and they cause a \emph{gen} step when they are collected by the SA.\\
+Second, we must consider applications that use confidential data where this behaviour is allowed by the AndroidManifest. As explained in the previous section, all the activities of an app are contained into that xml file. Anyway we do not need to check activity that are not present in the Manifest, because an activity like these will not be executed by the application and will possibly cause an exception (thus a developer normally delete this possibility during the testing phase).\\
+The AndroidManifest also define the permissions of the application. Methods whose behaviour is not allowed by the permissions are not executed, and the application will be stopped. Anyway, this can lead to unexpected behaviour. In example, we may have an gaming application and allow internet connections in the manifest, in order to send/receive data for place ourself in an on-line rank after each match. But, this game may be a malicious application that also sends outside confidential data that we do not want to share, thanks to the permission in the manifest. This means that we will check all the methods allowed by the Manifest.
 
 \subsection{Methods and data structure selection}
 \paragraph{}
@@ -862,6 +866,7 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
 \subsubsection{Description}
 
 \subsubsection{CCFG}
+\begin{figure*}
 % We need layers to draw the block diagram
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
@@ -879,37 +884,33 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
     \node [block] (AVP1) {void onCreate(Bundle savedInstanceState)  \{ };
     \node [block, below of=AVP1] (AVP2) {super.onCreate savedInstanceState)};
     \node [block, below of=AVP2] (AVP3) {setContentView(R.layout.main);};
-    \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc_button);};
+    \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc\_button);};
     \node [block, below of=AVP4] (AVP5) {getlocButton.setOnClickListener(this);};
 	\node [block, below of=AVP5, node distance=4em] (AVP6) {public void onClick(View v) \{ };
 	\node [block, below of=AVP6] (AVP7) {switch (v.getId())  \{ };
-    \node [block, below of=AVP7] (AVP8) {case R.id.getloc_button:};
+    \node [block, below of=AVP7] (AVP8) {case R.id.getloc\_button:};
     \node [block, below of=AVP8](AVP9) {Intent i = new Intent(this, GetLocation.class);};
     \node [block, below of=AVP9] (AVP10) {startActivity(i);};
-   \node [block, below of=AVP10] (AVP11) {break; \}\}};
+    \node [block, below of=AVP10] (AVP11) {break; \}\} };
     
     % GetLocation class nodes
     \node [block, below of=AVP10, node distance=5em] (GL1) {private LocationManager locationManager;};
     \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
     \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
-    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);};
-    \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-0, new LocationUpdateHandler());
-};
-    \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \}};
+    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
+    \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS\_PROVIDER, 0,\\ \qquad 0, new LocationUpdateHandler()); };
+    \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \} };
 
     % LocationUpdateHandler class nodes
-    \node [block, right of=GL5, node distance=5cm] (LUH1) {public void onLocationChanged(Location loc) \{ };
+    \node [block, right of=GL6, node distance=6cm] (LUH1) {public void onLocationChanged(Location loc) \{ };
     \node [block, below of=LUH1] (LUH2) {int lat = (int) (loc.getLatitude() * 1E6); };
     \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
-	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc_content);};
-	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "\n" + "Longitude: "+ lng); \}};
-
-    
-        
+	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc\_content); };
+	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "$\textbackslash\text{n}$" + "Longitude: "+ lng); \} };
+       
 \end{tikzpicture}
 }
-
+\end{figure*}
 \subsubsection{Tables}
 
 %----------------------------------------------------------------------------------------
