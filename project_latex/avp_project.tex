@@ -830,7 +830,7 @@ User applications are written in Java and run each in its JVM. Are developed wit
 
 \subsubsection{Android app peculiarities~\cite{Burnette:2010:HAI:1893143}}
 \paragraph{}
-Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. anyway, there are many other differences.
+Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. Anyway, there are many other differences.
 \begin{itemize}
 \item One of the main concepts in an Android program is the Activity. An activity is responsible for the application lifecycle. Every application can define more activities, one for each phase of its execution. Every activity have 5 states: starting, running, paused, stopped, destroyed. 
 \item Intents are used to describe specific actions. More formally, they are abstract descriptions of operations to be performed. They are used in the launch of an activity~\cite{website:androiddev}
@@ -840,8 +840,13 @@ Android app are different from a normal java application. First of all, they use
 
 \subsection{Analysis adaptation to Android Environment}
 \paragraph{}
-Nota 1: each object created or modified by methods of a class that belongs to the Android libraries is considered SAFE. Anyway, methods that belong to an Android library but export data will cause a \emph{gen} step.\\
-Nota 2: if we encounter a method that exports confidential data, but this method is not allowed by the AndroidManifest, it will not cause a \emph{gen} step.
+To be applied to an Android application to our analysis, needs some adaptation. First, given that Android apps not only use Java, but they also use the various libraries provided by Android, you have to classify such methods can be considered safe or not, and also in what situations they can still be considered safe or not.\\
+In Safeness Analysis are defined SAFE all those methods from the Android libraries that create and / or modify objects without sensitive data contained in these objects are exported. All methods that do not comply with this rule are considered UNSAFE and once collected by the SA generates a \emph{gen} step.\\
+We must, however, consider the case of applications that use sensitive data and the use was allowed on the part of the user during installation. As explained in the section above, all the activities of the app are contained inside of AndroidManifest, therefore, all the methods that can also export sensitive data, but that are contained inside of AndroidManifest must be considered SAFE, because they are part of the behavior "legal" of app. In the case where instead of our SA detects UNSAFE additional methods other than those covered by Manifest, this causes a \emph{gen} step, and thus detect any malicious behavior of the app.
+
+%Nota 1: each object created or modified by methods of a class that belongs to the Android libraries is considered SAFE. Anyway, methods that belong to an Android library but export data will cause a \emph{gen} step.
+
+%Nota 2: if we encounter a method that exports confidential data, but this method is not allowed by the AndroidManifest, it will not cause a \emph{gen} step.
 
 \subsection{Methods and data structure selection}
 \paragraph{}
