@@ -862,6 +862,53 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
 \subsubsection{Description}
 
 \subsubsection{CCFG}
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, align=left]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{every node}=[font=\footnotesize]
+
+\hspace*{-7mm}\scalebox{0.85}{
+\begin{tikzpicture}[node distance = 1cm, auto][every node/.style={inner sep=0,outer sep=0}]
+
+    % AVPTest nodes
+    \node [block] (AVP1) {void onCreate(Bundle savedInstanceState)  \{ };
+    \node [block, below of=AVP1] (AVP2) {super.onCreate savedInstanceState)};
+    \node [block, below of=AVP2] (AVP3) {setContentView(R.layout.main);};
+    \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc_button);};
+    \node [block, below of=AVP4] (AVP5) {getlocButton.setOnClickListener(this);};
+	\node [block, below of=AVP5, node distance=4em] (AVP6) {public void onClick(View v) \{ };
+	\node [block, below of=AVP6] (AVP7) {switch (v.getId())  \{ };
+    \node [block, below of=AVP7] (AVP8) {case R.id.getloc_button:};
+    \node [block, below of=AVP8](AVP9) {Intent i = new Intent(this, GetLocation.class);};
+    \node [block, below of=AVP9] (AVP10) {startActivity(i);};
+   \node [block, below of=AVP10] (AVP11) {break; \}\}};
+    
+    % GetLocation class nodes
+    \node [block, below of=AVP10, node distance=5em] (GL1) {private LocationManager locationManager;};
+    \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
+    \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
+    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);};
+    \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+0, new LocationUpdateHandler());
+};
+    \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \}};
+
+    % LocationUpdateHandler class nodes
+    \node [block, right of=GL5, node distance=5cm] (LUH1) {public void onLocationChanged(Location loc) \{ };
+    \node [block, below of=LUH1] (LUH2) {int lat = (int) (loc.getLatitude() * 1E6); };
+    \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
+	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc_content);};
+	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "\n" + "Longitude: "+ lng); \}};
+
+    
+        
+\end{tikzpicture}
+}
 
 \subsubsection{Tables}
 
