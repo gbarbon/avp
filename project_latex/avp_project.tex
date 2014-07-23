@@ -854,105 +854,85 @@ The AndroidManifest also define the permissions of the application. Methods whos
 
 \subsection{Methods and data structure selection}
 \paragraph{}
-metodi per salvare dati in file:
-classe FileOutputStream 
-you can call openFileOutput() to get a FileOutputStream that writes to a file in your internal directory
-classe File
-metodo write
-classe File
-metodo getTempFile(Context context, String url)
-the following method extracts the file name from a URL and creates a file with that name in your app's internal cache directory \\
-
-file esterni:
-getExternalStorageState() : If the returned state is equal to MEDIA\_MOUNTED, then you can read and write your files. \\
-
-If you want to save public files on the external storage, use the getExternalStoragePublicDirectory() method to get a File representing the appropriate directory on the external storage. The method takes an argument specifying the type of file you want to save so that they can be logically organized with other public files, such as DIRECTORY\_MUSIC or DIRECTORY\_PICTURES \\
-
-If you want to save files that are private to your app, you can acquire the appropriate directory by calling getExternalFilesDir() and passing it a name indicating the type of directory you'd like. Each directory created this way is added to a parent directory that encapsulates all your app's external storage files, which the system deletes when the user uninstalls your app.
-
-classe FileProvider
-metodo getUriForFile
-\begin{verbatim}
-// Use the FileProvider to get a content URI
-fileUri = FileProvider.getUriForFile(
-MainActivity.this,
-"com.example.myapp.fileprovider",
-requestFile);
-\end{verbatim}
-
-classe LocationManager
-\begin{verbatim}
-//Define the criteria how to select the locatioin provider -> use default
-matodo requestLocationUpdates(provider, 400, 1, this);
-metodo provider = locationManager.getBestProvider(criteria, false);
-    Location location = locationManager.getLastKnownLocation(provider);
-\end{verbatim} 
-
-classe Location
-double	 getLatitude()
-Get the latitude, in degrees.
-double	 getLongitude()
-Get the longitude, in degrees.
-float	 distanceTo(Location dest)
-Returns the approximate distance in meters between this location and the given location.\\
-
-MediaMetadataRetriever class:
+We still need something in order to perform the Safeness Analysis in the Android environment. Before starting the analysis execution, it is necessary to define two sets of methods:
 \begin{itemize}
-\item void setDataSource(String path)\\This method is used to set the media file source path in string format.
-\item string extractMetadata(int keyCode)\\This method is used to extract metadata as per keys selected that are mentioned above. 
-\item byte[] getEmbeddedPicture()\\This method is used to extract album art associated with media file.
+\item methods that \emph{exports data}
+\item methods that are \emph{UNSAFE} (so methods that generate \emph{confidential data})
 \end{itemize}
+Notice that we refer to methods supplied by the Android libraries, not to methods defined by the developer. Indeed, the last ones are explored by the analysis itself.\\
+Here we present a small subsets of methods that exports data that we will use it the final example. Anyway, in a real analysis we will need much more methods, with respect to the libraries used in the program.\\
 
-classe ExifInterface
-\begin{verbatim}
-method getAttribute(String tag(vedi http://developer.android.com/reference/android/media/ExifInterface.html per tag)): Returns the value of the specified tag or null if there is no such tag in the JPEG file.
-	getLatLong(float[] output):Stores the latitude and longitude value in a float array.
+\subsubsection{Methods that exports data}
+Methods that saves data into local files:\\
+\noindent \textbf{FileOutputStream}
+\begin{description}
+\item[{openFileOutput()}] \hfill \\It gets a FileOutputStream that writes to a file in your internal directory
+\end{description}
 
-interface GpsStatus.Listener 
-public method onGpsStatusChanged(int event) : Called to report changes in the GPS status.
-\end{verbatim}
-CLASS ADDRESS
-String	 getAddressLine(int index)
-Returns a line of the address numbered by the given index (starting at 0), or null if no such line is present.
-String	 getAdminArea()
-Returns the administrative area name of the address, for example, "CA", or null if it is unknown
-String	 getCountryCode()
-Returns the country code of the address, for example "US", or null if it is unknown.
-String	 getCountryName()
-Returns the localized country name of the address, for example "Iceland", or null if it is unknown.
-Bundle	 getExtras()
-Returns additional provider-specific information about the address as a Bundle.
-String	 getFeatureName()
-Returns the feature name of the address, for example, "Golden Gate Bridge", or null if it is unknown
-double	 getLatitude()
-Returns the latitude of the address if known.
-Locale	 getLocale()
-Returns the Locale associated with this address.
-String	 getLocality()
-Returns the locality of the address, for example "Mountain View", or null if it is unknown.
-double	 getLongitude()
-Returns the longitude of the address if known.
-String	 getPhone()
-Returns the phone number of the address if known, or null if it is unknown.
-String	 getPostalCode()
-Returns the postal code of the address, for example "94110", or null if it is unknown.
-String	 getPremises()
-Returns the premises of the address, or null if it is unknown.
-String	 getSubAdminArea()
-Returns the sub-administrative area name of the address, for example, "Santa Clara County", or null if it is unknown
-String	 getSubLocality()
-Returns the sub-locality of the address, or null if it is unknown.
-String	 getSubThoroughfare()
-Returns the sub-thoroughfare name of the address, which may be null.
-String	 getThoroughfare()
-Returns the thoroughfare name of the address, for example, "1600 Ampitheater Parkway", which may be null
-CLASS GEOCODER
-List<Address>	 getFromLocation(double latitude, double longitude, int maxResults)
-Returns an array of Addresses that are known to describe the area immediately surrounding the given latitude and longitude.
-List<Address>	 getFromLocationName(String locationName, int maxResults, double lowerLeftLatitude, double lowerLeftLongitude, double upperRightLatitude, double upperRightLongitude)
-Returns an array of Addresses that are known to describe the named location, which may be a place name such as "Dalvik, Iceland", an address such as "1600 Amphitheatre Parkway, Mountain View, CA", an airport code such as "SFO", etc..
-List<Address>	 getFromLocationName(String locationName, int maxResults)
-Returns an array of Addresses that are known to describe the named location, which may be a place name such as "Dalvik, Iceland", an address such as "1600 Amphitheatre Parkway, Mountain View, CA", an airport code such as "SFO", etc..
+\noindent \textbf{File Class}
+\begin{description}
+\item[{getTempFile(Context context, String url)}] \hfill \\
+It extracts the file name from a URL and creates a file with that name in your app's internal cache directory.
+\end{description}
+
+\noindent \textbf{External files:}
+\begin{description}
+\item[{getExternalStorageState()}] \hfill \\If the returned state is equal to MEDIA\_MOUNTED, then you can read and write your files.
+\item[{getExternalStoragePublicDirectory()}] \hfill \\It Saves public files on external storage, by getting a File representing the appropriate directory on the external storage. The method takes an argument specifying the type of file you want to save so that they can be logically organized with other public files, such as DIRECTORY\_MUSIC or DIRECTORY\_PICTURES \\
+\item[{getExternalFilesDir()}] \hfill \\If you want to save files that are private to your app, you can acquire the appropriate directory by calling this method and passing it a name indicating the type of directory you'd like. Each directory created this way is added to a parent directory that encapsulates all your app's external storage files, which the system deletes when the user uninstalls your app.
+\end{description}
+
+\noindent \textbf{FileProvider Class}
+\begin{description}
+\item[{getUriForFile}] \hfill \\Use the FileProvider to get a content URI
+\item[{}] \hfill \\
+\end{description}
+
+%\noindent \textbf{}
+%\begin{description}
+%\item[{}] \hfill \\
+%\item[{}] \hfill \\
+%\end{description}
+
+\subsubsection{Methods that generate confidential data}
+\noindent \textbf{LocationManager Class}
+\begin{description}
+\item[{requestLocationUpdates(provider, 400, 1, this}] \hfill \\
+\item[{getBestProvider(criteria, false);}] \hfill \\
+\item[{getLastKnownLocation(provider)}] \hfill \\
+\end{description}
+
+\noindent \textbf{Location Class}
+\begin{description}
+\item[{double getLatitude()}] \hfill \\Get the latitude, in degrees.
+\item[{double getLongitude()}] \hfill \\Get the longitude, in degrees.
+\item[{distanceTo(Location dest)}] \hfill \\Returns the approximate distance in meters between this location and the given location.
+\end{description}
+
+\noindent \textbf{ExifInterface Class}
+\begin{description}
+\item[{getAttribute()}] \hfill \\Returns the value of the specified tag or null if there is no such tag in the JPEG file.
+\item[{getLatLong(float[] output)}] \hfill \\Stores the latitude and longitude value in a float array.
+\end{description}
+
+\noindent \textbf{GpsStatus.Listener Interface}
+\begin{description}
+\item[{onGpsStatusChanged(int event)}] \hfill \\Called to report changes in the GPS status.
+\item[{}] \hfill \\
+\end{description}
+
+\noindent \textbf{MediaMetadataRetriever Class}
+\begin{description}
+\item[{void setDataSource(String path)}] \hfill \\This method is used to set the media file source path in string format.
+\item[{string extractMetadata(int keyCode)}] \hfill \\This method is used to extract metadata as per keys selected that are mentioned above. 
+\item[{byte[] getEmbeddedPicture()}] \hfill \\This method is used to extract album art associated with media file.
+\end{description}
+
+%\noindent \textbf{}
+%\begin{description}
+%\item[{}] \hfill \\
+%\item[{}] \hfill \\
+%\end{description}
 
 
 \subsection{Android App Example}
