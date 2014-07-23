@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AVPtest</string>
+    <string name="hello">Hello World</string>
+    <string name="getloc_label">Get Location</string>
+    <string name="getloc_text">text</string>
+    <string name="getloc_title">Your current position</string>
+</resources>

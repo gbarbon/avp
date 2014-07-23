@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  22 JUL 2014 14:48
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  23 JUL 2014 02:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -933,29 +933,47 @@ Underfull \hbox (badness 1715) in paragraph at lines 4--8
 -ers.
  []
 
-) (./avp_project.ent) [9] (./avp_project.aux) ) 
+) (./avp_project.ent) [9]
+(/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+LaTeX Font Info:    Font shape `T1/pcr/bx/n' in size <9> not available
+(Font)              Font shape `T1/pcr/b/n' tried instead on input line 897.
+LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <9> not available
+(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 907.
+ [10
+
+]
+(/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+) [11]
+(./avp_project.aux) ) 
 Here is how much of TeX's memory you used:
- 15025 strings out of 493315
- 290213 string characters out of 6137904
- 390759 words of memory out of 5000000
- 18111 multiletter control sequences out of 15000+600000
- 80416 words of font info for 137 fonts, out of 8000000 for 9000
+ 15271 strings out of 493315
+ 293668 string characters out of 6137904
+ 432027 words of memory out of 5000000
+ 18346 multiletter control sequences out of 15000+600000
+ 81774 words of font info for 141 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 56i,19n,56p,1034b,879s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2013/texmf-d
-ist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/
-courier/ucrb8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/courier/
-ucrr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb
-></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/loc
-al/texlive/2013/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (9 pages, 144346 bytes).
+ 56i,19n,56p,1034b,1467s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/base/8
+r.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10
+.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
+b></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/l
+ocal/texlive/2013/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/tex
+live/2013/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/20
+13/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2013/texmf-d
+ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/
+type1/urw/times/utmri8a.pfb>
+Output written on avp_project.pdf (11 pages, 158931 bytes).
 PDF statistics:
- 74 PDF objects out of 1000 (max. 8388607)
- 53 compressed objects within 1 object stream
+ 84 PDF objects out of 1000 (max. 8388607)
+ 60 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
