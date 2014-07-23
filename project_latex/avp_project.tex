@@ -965,7 +965,8 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
 \subsubsection{Description}
 
 \subsubsection{CCFG}
-\begin{figure*}
+\begin{figure*} [ht]
+\begin{center}
 % We need layers to draw the block diagram
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
@@ -993,7 +994,7 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
     \node [block, below of=AVP10] (AVP11) {break; \}\} };
     
     % GetLocation class nodes
-    \node [block, below of=AVP10, node distance=5em] (GL1) {private LocationManager locationManager;};
+    \node [block, right of=AVP1, node distance=10cm] (GL1) {private LocationManager locationManager;};
     \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
     \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
     \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
@@ -1001,14 +1002,55 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
     \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \} };
 
     % LocationUpdateHandler class nodes
-    \node [block, right of=GL6, node distance=6cm] (LUH1) {public void onLocationChanged(Location loc) \{ };
+    \node [block, below of=GL5, node distance=8em] (LUH1) {public void onLocationChanged(Location loc) \{ };
     \node [block, below of=LUH1] (LUH2) {int lat = (int) (loc.getLatitude() * 1E6); };
     \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
 	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc\_content); };
 	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "$\textbackslash\text{n}$" + "Longitude: "+ lng); \} };
-       
+
+    %background shapes 
+    \begin{pgfonlayer}{background}
+        %AVPTest Class
+        \path (AVP4.west |- AVP1.north)+(-0.2,0.2) node (a) {};
+        \path (AVP11.south -| AVP4.east)+(0.2,-0.4) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %GetLocation Class
+        \path (GL4.west |- GL1.north)+(-0.2,0.2) node (a) {};
+        \path (LUH5.south -| GL4.east)+(0.2,-1) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %LocationUpdateHandler Class
+        \path (LUH4.west |- LUH1.north)+(-0.2,0.2) node (a) {};
+        \path (LUH5.south -| LUH4.east)+(0.2,-0.4) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+    \end{pgfonlayer}  
+        
+    %class labels
+    \path (AVP11.south)+(-2.3,-0.6) node (AVPTest) {\textbf{AVPTest Class}};
+    \path (LUH5.south)+(-4,-1.2) node (GetLocation) {\textbf{GetLocation Class}};
+    \path (LUH5.south)+(-2.5,-0.6) node (LocationUpdateHandler) {\textbf{LocationUpdateHandler Class}};
+    
+    % Draw arrows between blocks internal to classes
+    \path [line] (AVP1) -- (AVP2);
+    \path [line] (AVP2) -- (AVP3);
+    \path [line] (AVP3) -- (AVP4);  
+    \path [line] (AVP4) -- (AVP5);  
+    \path [line] (AVP6) -- (AVP7);  
+    \path [line] (AVP7) -- (AVP8);  
+    \path [line] (AVP8) -- (AVP9);  
+    \path [line] (AVP9) -- (AVP10);  
+    \path [line] (AVP10) -- (AVP11);
+    \path [line] (GL2) -- (GL3);      
+    \path [line] (GL3) -- (GL4);
+    \path [line] (GL4) -- (GL5);
+    \path [line] (GL5) -- (GL6);
+    \path [line] (LUH1) -- (LUH2);
+    \path [line] (LUH2) -- (LUH3);
+    \path [line] (LUH3) -- (LUH4);
+    \path [line] (LUH4) -- (LUH5);
+     
 \end{tikzpicture}
 }
+\end{center}
 \end{figure*}
 \subsubsection{Tables}
 

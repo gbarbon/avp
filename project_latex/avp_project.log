@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  23 JUL 2014 17:21
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  23 JUL 2014 18:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1016,27 +1016,29 @@ Missing character: There is no = in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no ] in font nullfont!
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1011.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1052.
 
-LaTeX Warning: Command \textbackslash invalid in math mode on input line 1011.
+LaTeX Warning: Command \textbackslash invalid in math mode on input line 1052.
 
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 1052.
 (./avp_project.bbl
 Underfull \hbox (badness 1715) in paragraph at lines 4--8
 []\T1/ptm/m/sc/8 Android Open Source Project\T1/ptm/m/n/8 .  An-droid De-vel-op
 -ers.
  []
 
-[10] [11]) (./avp_project.ent) [12
+[10]) (./avp_project.ent) [11
 
 ]
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 LaTeX Font Info:    Font shape `T1/pcr/bx/n' in size <9> not available
-(Font)              Font shape `T1/pcr/b/n' tried instead on input line 1049.
+(Font)              Font shape `T1/pcr/b/n' tried instead on input line 1091.
 LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <9> not available
-(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 1059.
- [13
+(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 1101.
+ [12
 
 ]
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -1044,14 +1046,14 @@ File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
-) [14]
+) [13]
 (./avp_project.aux) ) 
 Here is how much of TeX's memory you used:
- 15407 strings out of 493315
- 295520 string characters out of 6137904
- 434857 words of memory out of 5000000
- 18479 multiletter control sequences out of 15000+600000
- 84170 words of font info for 145 fonts, out of 8000000 for 9000
+ 15435 strings out of 493315
+ 296100 string characters out of 6137904
+ 435288 words of memory out of 5000000
+ 18506 multiletter control sequences out of 15000+600000
+ 86973 words of font info for 147 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  56i,19n,56p,1034b,1467s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/base/8
@@ -1065,10 +1067,10 @@ live/2013/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/20
 13/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2013/texmf-d
 ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (14 pages, 167181 bytes).
+Output written on avp_project.pdf (13 pages, 168194 bytes).
 PDF statistics:
- 94 PDF objects out of 1000 (max. 8388607)
- 67 compressed objects within 1 object stream
+ 91 PDF objects out of 1000 (max. 8388607)
+ 65 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
