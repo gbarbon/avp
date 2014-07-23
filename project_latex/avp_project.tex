@@ -965,7 +965,7 @@ Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the exam
 \subsubsection{Description}
 We implemented a simple application that show the istantaneous position of the device. The position is given by the latitude and the longitude. When the position changes, it is automatically updated. Now we explain how works this app.
 
-The first schermate that we find is a simple schermate with a button that when we press it, it redirect us to the second schermate that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device change its locantion the values of longitude and latitude are updated automatically. 
+The first screen that we find is a simple screen with a button that when we press it, it redirect us to the second screen that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device change its locantion the values of longitude and latitude are updated automatically. 
 
 The confidantial datas are contained in the variable longitude and latitude, then we have to pay attention if they are exported in some ways. Obviously if they are only modified and not exported in some way, the application is classified as 'safe'.
 
