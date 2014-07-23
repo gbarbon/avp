@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  23 JUL 2014 17:06
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.2.11)  23 JUL 2014 17:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -925,6 +925,52 @@ Underfull \hbox (badness 10000) in paragraph at lines 825--825
  []
 
 [8]
+Overfull \hbox (38.15625pt too wide) in paragraph at lines 881--881
+[]\T1/pcr/m/n/10 // Use the FileProvider to get a content URI[] 
+ []
+
+[9]
+Overfull \hbox (212.15625pt too wide) in paragraph at lines 889--889
+[]\T1/pcr/m/n/10 //Define the criteria how to select the locatioin provider -> 
+use default[] 
+ []
+
+
+Overfull \hbox (98.15625pt too wide) in paragraph at lines 889--889
+[]\T1/pcr/m/n/10 matodo requestLocationUpdates(provider, 400, 1, this);[] 
+ []
+
+
+Overfull \hbox (176.15625pt too wide) in paragraph at lines 889--889
+[]\T1/pcr/m/n/10 metodo provider = locationManager.getBestProvider(criteria, fa
+lse);[] 
+ []
+
+
+Overfull \hbox (200.15625pt too wide) in paragraph at lines 889--889
+[]    \T1/pcr/m/n/10 Location location = locationManager.getLastKnownLocation(p
+rovider);[] 
+ []
+
+
+Overfull \hbox (1016.15625pt too wide) in paragraph at lines 913--913
+[]\T1/pcr/m/n/10 method getAttribute(String tag(vedi http://developer.android.c
+om/reference/android/media/ExifInterface.html per tag)): Returns the value of t
+he specified tag or null if there is no such tag in the JPEG file.[] 
+ []
+
+
+Overfull \hbox (278.15625pt too wide) in paragraph at lines 913--913
+[]\T1/pcr/m/n/10 getLatLong(float[] output):Stores the latitude and longitude v
+alue in a float array.[] 
+ []
+
+
+Overfull \hbox (308.15625pt too wide) in paragraph at lines 913--913
+[]\T1/pcr/m/n/10 public method onGpsStatusChanged(int event) : Called to report
+ changes in the GPS status.[] 
+ []
+
 \pgf@layerbox@background=\box69
 \pgf@layerboxsaved@background=\box70
 \pgf@layerbox@foreground=\box71
@@ -970,10 +1016,9 @@ Missing character: There is no = in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no ] in font nullfont!
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 912.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1011.
 
-
-LaTeX Warning: Command \textbackslash invalid in math mode on input line 912.
+LaTeX Warning: Command \textbackslash invalid in math mode on input line 1011.
 
 (./avp_project.bbl
 Underfull \hbox (badness 1715) in paragraph at lines 4--8
@@ -981,17 +1026,17 @@ Underfull \hbox (badness 1715) in paragraph at lines 4--8
 -ers.
  []
 
-[9] [10]) (./avp_project.ent) [11
+[10] [11]) (./avp_project.ent) [12
 
 ]
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 LaTeX Font Info:    Font shape `T1/pcr/bx/n' in size <9> not available
-(Font)              Font shape `T1/pcr/b/n' tried instead on input line 950.
+(Font)              Font shape `T1/pcr/b/n' tried instead on input line 1049.
 LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <9> not available
-(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 960.
- [12
+(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 1059.
+ [13
 
 ]
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -999,7 +1044,7 @@ File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 (/usr/local/texlive/2013/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
-) [13]
+) [14]
 (./avp_project.aux) ) 
 Here is how much of TeX's memory you used:
  15407 strings out of 493315
@@ -1020,10 +1065,10 @@ live/2013/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/20
 13/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2013/texmf-d
 ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on avp_project.pdf (13 pages, 162708 bytes).
+Output written on avp_project.pdf (14 pages, 167181 bytes).
 PDF statistics:
- 91 PDF objects out of 1000 (max. 8388607)
- 65 compressed objects within 1 object stream
+ 94 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
