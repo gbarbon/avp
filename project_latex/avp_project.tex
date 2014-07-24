@@ -919,25 +919,21 @@ This section is devoted to an example applied to a real Android application. Thi
 Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the example.
 
 \subsubsection{Description}
-We implemented a simple application that show the istantaneous position of the device. The position is given by the latitude and the longitude. When the position changes, it is automatically updated. Now we explain how works this app.
+We implemented a simple application that show the instantaneous position of the device. The position is given by the latitude and the longitude. When the position changes, it is automatically updated. Now we explain how works this app.
 
-The first screen that we find is a simple screen with a button that when we press it, it redirect us to the second screen that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device change its locantion the values of longitude and latitude are updated automatically. 
+The first screen that we find is a simple screen with a button that when we press it, it redirect us to the second screen that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device change its location the values of longitude and latitude are updated automatically. 
 
-The confidantial datas are contained in the variable longitude and latitude, then we have to pay attention if they are exported in some ways. Obviously if they are only modified and not exported in some way, the application is classified as 'safe'.
+The confidential data are contained in the variable longitude and latitude, then we have to pay attention if they are exported in some ways. Obviously if they are only modified and not exported in some way, the application is classified as \emph{SAFE}.
 
 The expected result of the analysis is that there are no unsafe variable because there are no method that export the confidential data, namely the value of the longitude and the latitude. During the analysis in fact some variables are inserted into the list of unsafe variables as "possible unsafe variable" but in the end, all of them are deleted from it. 
 
-The first step of our analysis is done analysing the file AVPtest which contains the main class. Inside it we see that it calls a method that create the activity associated to GeoLocation class, so our attention is focused on this class. Thus We expand this class and analyze it.
+Let's take a look to the AVPtest file, which contains the main class. Inside it we see that it calls a method that create the activity associated to GeoLocation class, so our attention is focused on this class. Thus We expand this class and analyze it.
 
-In the GeoLocation class, we can see that there are a new call to the costructor LocationUpdateHandler() using the method requestLocationUpdates(...). With that, the program has created a listener that, every time that the position changes, it starts the function LocationUpdateHandler() that use the implemented function onLocationChanged(...), for this reason we expand this function. Inside it we can see that there are no method which export confidential data. Using this information we can eliminate the variable associated to the method onLocationChanged(...) and requestLocationUpdates(...) from the list of possible unsafe variable.
+In the GeoLocation class, we can see that there are a new call to the constructor LocationUpdateHandler() using the method requestLocationUpdates(...). With that, the program has created a listener that, every time that the position changes, it starts the function LocationUpdateHandler() that use the implemented function onLocationChanged(...), for this reason we expand this function. Inside it we can see that there are only few methods that could export confidential data, that's to say the methods involved in the creation of the file. These methods will thus cause a \emph{gen step}. Anyway, by executing the analysis, we will see that the file will not contain confidential data and we will obtain a \emph{kill step} in the analysis. Our analysis will also cause some others kill, but the killed object were not exported before, so these kills are not important. In the end of our analysis we obtain the expected result.
 
-In the end of our analysis we obtain the expected result.
+Instead, if we are interested to an unsafe application, we have to modify the point in the application in which the string contained in the file is created. In example, we can insert the latitude and longitude values into that string. In this case the application can be considered malicious and so \emph{UNSAFE}.
 
-Instead, if we are interested to an unsafe application, we have to modify the point in the application in which the position is updated. In this point we can insert a simple command that send the current position of the device to a malicious user or save its position in a file and sends it later (we can see some examples of method that save the information in a file and share it with other users in the section 'Methods and data structure selection').
-
-\subsubsection{CCFG}
-
-\subsubsection{Tables}
+Please refer to Appendix B (p.~\pageref{app:appendixB}) for the CCFG and to Appendix C (p.~\pageref{app:appendixC}) of the example.
 %----------------------------------------------------------------------------------------
 %	6. Conclusions
 %----------------------------------------------------------------------------------------
