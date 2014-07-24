@@ -1010,6 +1010,7 @@ Instead, if we are interested to an unsafe application, we have to modify the po
     \path [line] (AVP8) -- (AVP9);  
     \path [line] (AVP9) -- (AVP10);  
     \path [line] (AVP10) -- (AVP11);
+    \path [line] (GL1) -- (GL2);
     \path [line] (GL2) -- (GL3);      
     \path [line] (GL3) -- (GL4);
     \path [line] (GL4) -- (GL5);
@@ -1018,6 +1019,13 @@ Instead, if we are interested to an unsafe application, we have to modify the po
     \path [line] (LUH2) -- (LUH3);
     \path [line] (LUH3) -- (LUH4);
     \path [line] (LUH4) -- (LUH5);
+    
+    %curved arrows
+    \begin{scope}[looseness=1.8]
+        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL1);
+        \path [draw, ->] (GL5) edge[out=0,in=0,->]  node [right] {} (LUH1);
+        %\path [draw, ->] (T3) edge[out=180,in=180,->, bend right=73]  node [left] {} (T6);
+    \end{scope} 
      
 \end{tikzpicture}
 }
