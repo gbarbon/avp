@@ -30,6 +30,15 @@
 \newblock {\em Big Java}, 2nd~ed.
 \newblock John Wiley \& Sons, Inc., New York, NY, USA, 2008.
 
+\bibitem{ccfgexception}
+{\sc Jo, J.-W., and Chang, B.-M.}
+\newblock Constructing control flow graph for java by decoupling exception flow
+  from normal flow.
+\newblock In {\em Computational Science and Its Applications, ICCSA 2004},
+  A.~Lagan\'a, M.~Gavrilova, V.~Kumar, Y.~Mun, C.~Tan, and O.~Gervasi, Eds.,
+  vol.~3043 of {\em Lecture Notes in Computer Science}. Springer Berlin
+  Heidelberg, 2004, pp.~106--113.
+
 \bibitem{Nielson:1999:PPA:555142}
 {\sc Nielson, F., Nielson, H.~R., and Hankin, C.}
 \newblock {\em Principles of Program Analysis}.
@@ -41,5 +50,11 @@
 \newblock
   \url{http://dev.phirebranding.com/leviathan/blog/zero-permission-android-applications/}.
 \newblock Accessed: 2014-07-23.
+
+\bibitem{website:dataprotectact}
+{\sc {UK Gov}}.
+\newblock {Data Protection Act}.
+\newblock \url{http://www.legislation.gov.uk/ukpga/1998/29/contents}, 1998.
+\newblock Accessed: 2014-07-10.
 
 \end{thebibliography}
