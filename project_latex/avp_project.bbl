@@ -12,6 +12,14 @@
   Platform}, 3rd~ed.
 \newblock Pragmatic Bookshelf, 2010.
 
+\bibitem{website:majorvuln}
+{\sc {Dan Graziano}}.
+\newblock {Major Android vulnerability gives apps access to sensitive data
+  without permission}.
+\newblock
+  \url{http://bgr.com/2012/04/11/major-android-vulnerability-gives-apps-access-to-sensitive-data-without-permission/}.
+\newblock Accessed: 2014-07-23.
+
 \bibitem{CCFG}
 {\sc Harrold, M.~J., and Rothermel, G.}
 \newblock Performing data flow testing on classes.
@@ -26,5 +34,12 @@
 {\sc Nielson, F., Nielson, H.~R., and Hankin, C.}
 \newblock {\em Principles of Program Analysis}.
 \newblock Springer-Verlag New York, Inc., Secaucus, NJ, USA, 1999, ch.~2.1.4.
+
+\bibitem{website:zeroperm}
+{\sc {Paul Brodeur}}.
+\newblock {Zero Permission Android Applications}.
+\newblock
+  \url{http://dev.phirebranding.com/leviathan/blog/zero-permission-android-applications/}.
+\newblock Accessed: 2014-07-23.
 
 \end{thebibliography}

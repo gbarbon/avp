@@ -35,7 +35,9 @@
 \usepackage{supertabular} % table span multiple pages
 \usetikzlibrary{shapes,arrows}
 \usepackage{courier}
-\usepackage{url} %for showing urls
+\usepackage[hyphens]{url} %for showing urls in bibliography
+%\usepackage{hyperref} %for breaking urls in bib
+%\hypersetup{colorlinks=true,breaklinks=true} %for showing urls
 
 %\usepackage{sectsty} % Allows customizing section commands
 %\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -850,7 +852,7 @@ Android app are different from a normal java application. First of all, they use
 
 Our analysis needs some adaptation in order to be Applied to Android applications. First, we must consider the various libraries provided by Android. In Safeness Analysis all methods that come from the Android libraries and create and/or modify objects are defined SAFE. All methods that do not comply with this rule, so methods that exports confidential data, are considered UNSAFE and they cause a \emph{gen} step when they are collected by the SA.\\
 Second, we must consider applications that use confidential data where this behaviour is allowed by the AndroidManifest. As explained in the previous section, all the activities of an app are contained into that xml file. Anyway we do not need to check activity that are not present in the Manifest, because an activity like these will not be executed by the application and will possibly cause an exception (thus a developer normally delete this possibility during the testing phase).\\
-The AndroidManifest also define the permissions of the application. Methods whose behaviour is not allowed by the permissions are not executed, and the application will be stopped. Anyway, this can lead to unexpected behaviour. In example, we may have an gaming application and allow internet connections in the manifest, in order to send/receive data for place ourself in an on-line rank after each match. But, this game may be a malicious application that also sends outside confidential data that we do not want to share, thanks to the permission in the manifest. This means that we will check all the methods allowed by the Manifest.
+The AndroidManifest also define the permissions of the application. Methods whose behaviour is not allowed by the permissions are not executed, and the application will be stopped. Anyway, this can lead to unexpected behaviour. In example, we may have an gaming application and allow internet connections in the manifest, in order to send/receive data for place ourself in an on-line rank after each match. But, this game may be a malicious application that also sends outside confidential data that we do not want to share, thanks to the permission in the manifest. Moreover, it seems that an app can anyhow access some data even if it has no permissions~\cite{website:majorvuln}~\cite{website:zeroperm}. This means that we must check all the methods allowed by the Manifest.
 
 \subsection{Methods and data structure selection}
 \paragraph{}
@@ -863,29 +865,22 @@ Notice that we refer to methods supplied by the Android libraries, not to method
 Here we present a small subsets of methods that exports data that we will use it the final example. Anyway, in a real analysis we will need much more methods, with respect to the libraries used in the program.\\
 
 \subsubsection{Methods that exports data}
-Methods that saves data into local files:\\
-\noindent \textbf{FileOutputStream}
+\noindent Save a File on Internal Storage:
 \begin{description}
-\item[{openFileOutput()}] \hfill \\It gets a FileOutputStream that writes to a file in your internal directory
+\item[{File Class constructor + getFilesDir()}] \hfill \\It creates a new file in an internal directory of the app.
+\item[{createTempFile()}] \hfill \\It creates an empty temporary file using the given prefix and suffix as part of the file name.
+\item[{openFileOutput()}] \hfill \\It gets a FileOutputStream object that writes to a file in your internal directory.
 \end{description}
 
-\noindent \textbf{File Class}
+\noindent Save a File on External Storage:
 \begin{description}
-\item[{getTempFile(Context context, String url)}] \hfill \\
-It extracts the file name from a URL and creates a file with that name in your app's internal cache directory.
+\item[{getExternalStoragePublicDirectory()}] \hfill \\It saves public files on external storage, by getting a file representing the appropriate directory on the external storage.
+\item[{getExternalFilesDir()}] \hfill \\It saves files that are private to the app, by passing the appropriate directory.
 \end{description}
 
-\noindent \textbf{External files:}
+\noindent Sending HTTP Post data:
 \begin{description}
-\item[{getExternalStorageState()}] \hfill \\If the returned state is equal to MEDIA\_MOUNTED, then you can read and write your files.
-\item[{getExternalStoragePublicDirectory()}] \hfill \\It Saves public files on external storage, by getting a File representing the appropriate directory on the external storage. The method takes an argument specifying the type of file you want to save so that they can be logically organized with other public files, such as DIRECTORY\_MUSIC or DIRECTORY\_PICTURES \\
-\item[{getExternalFilesDir()}] \hfill \\If you want to save files that are private to your app, you can acquire the appropriate directory by calling this method and passing it a name indicating the type of directory you'd like. Each directory created this way is added to a parent directory that encapsulates all your app's external storage files, which the system deletes when the user uninstalls your app.
-\end{description}
-
-\noindent \textbf{FileProvider Class}
-\begin{description}
-\item[{getUriForFile}] \hfill \\Use the FileProvider to get a content URI
-\item[{}] \hfill \\
+\item[{HttpPost Class constructor + setEntity()}] \hfill \\The combination of these two methods allow to send data through an http post.
 \end{description}
 
 %\noindent \textbf{}
@@ -895,38 +890,19 @@ It extracts the file name from a URL and creates a file with that name in your a
 %\end{description}
 
 \subsubsection{Methods that generate confidential data}
-\noindent \textbf{LocationManager Class}
+\noindent Retrieving GPS location:
 \begin{description}
-\item[{requestLocationUpdates(provider, 400, 1, this}] \hfill \\
-\item[{getBestProvider(criteria, false);}] \hfill \\
-\item[{getLastKnownLocation(provider)}] \hfill \\
+\item[{requestLocationUpdates()}] \hfill \\Method of the LocationManager class, it registers for location updates by using an intent or a thread and some criteria or a provider.
+\item[{getLatitude()}] \hfill \\Method of the Location class, it gets the latitude, in degrees.
+\item[{getLongitude()}] \hfill \\Method of the Location class, it gets the longitude, in degrees.
 \end{description}
 
-\noindent \textbf{Location Class}
+\noindent Retrieving a contact from address book:
 \begin{description}
-\item[{double getLatitude()}] \hfill \\Get the latitude, in degrees.
-\item[{double getLongitude()}] \hfill \\Get the longitude, in degrees.
-\item[{distanceTo(Location dest)}] \hfill \\Returns the approximate distance in meters between this location and the given location.
+\item[{getContentResolver()}] \hfill \\Return a ContentResolver instance. If applied to ContactsContract it is capable of returning contact data.
 \end{description}
 
-\noindent \textbf{ExifInterface Class}
-\begin{description}
-\item[{getAttribute()}] \hfill \\Returns the value of the specified tag or null if there is no such tag in the JPEG file.
-\item[{getLatLong(float[] output)}] \hfill \\Stores the latitude and longitude value in a float array.
-\end{description}
-
-\noindent \textbf{GpsStatus.Listener Interface}
-\begin{description}
-\item[{onGpsStatusChanged(int event)}] \hfill \\Called to report changes in the GPS status.
-\item[{}] \hfill \\
-\end{description}
-
-\noindent \textbf{MediaMetadataRetriever Class}
-\begin{description}
-\item[{void setDataSource(String path)}] \hfill \\This method is used to set the media file source path in string format.
-\item[{string extractMetadata(int keyCode)}] \hfill \\This method is used to extract metadata as per keys selected that are mentioned above. 
-\item[{byte[] getEmbeddedPicture()}] \hfill \\This method is used to extract album art associated with media file.
-\end{description}
+Anyway, notice that confidential data may also be created by methods developed with the application.
 
 %\noindent \textbf{}
 %\begin{description}
@@ -1078,7 +1054,8 @@ Instead, if we are interested to an unsafe application, we have to modify the po
   1 & AVPtest &  & \\  
   \hline
 \end{tabular}
-\qquad \qquad
+\end{align*}
+\begin{align*}
 \begin{tabular}{|l|*{3}{c|}}
   \hline
   n & classname & entry & exit  \\
