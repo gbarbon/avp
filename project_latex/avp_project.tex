@@ -1108,7 +1108,7 @@ public class GetLocation extends Activity {
 
     % AVPTest nodes
     \node [block] (AVP1) {void onCreate(Bundle savedInstanceState)  \{ };
-    \node [block, below of=AVP1] (AVP2) {super.onCreate savedInstanceState)};
+    \node [block, below of=AVP1] (AVP2) {super.onCreate(savedInstanceState)};
     \node [block, below of=AVP2] (AVP3) {setContentView(R.layout.main);};
     \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc\_button);};
     \node [block, below of=AVP4] (AVP5) {getlocButton.setOnClickListener(this);};
@@ -1165,7 +1165,6 @@ public class GetLocation extends Activity {
     \path [line] (AVP8) -- (AVP9);  
     \path [line] (AVP9) -- (AVP10);  
     \path [line] (AVP10) -- (AVP11);
-    \path [line] (GL1) -- (GL2);
     \path [line] (GL2) -- (GL3);      
     \path [line] (GL3) -- (GL4);
     \path [line] (GL4) -- (GL5);
@@ -1177,9 +1176,9 @@ public class GetLocation extends Activity {
     
     %curved arrows
     \begin{scope}[looseness=1.8]
-        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL1);
+        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL2);
         \path [draw, ->] (GL5) edge[out=0,in=0,->]  node [right] {} (LUH1);
-        %\path [draw, ->] (T3) edge[out=180,in=180,->, bend right=73]  node [left] {} (T6);
+        \path [draw, ->, dashed] (AVP5) edge[out=180,in=180,->]  node [left] {} (AVP6);
     \end{scope} 
      
 \end{tikzpicture}
