@@ -95,7 +95,7 @@ Note: we use the abbreviation \lq\lq confidential methods\rq\rq\ for methods tha
 Now the main question becomes: in an application that generates sensitive data, are these data exported?
 \subsection{Data Definition}
 \paragraph{}
-Data can be classified in three different classes: \textit{personal, confidential or sensitive.} The main difference between these types of data is the kind of information which are related. 
+Data can be classified in three different classes: \textit{personal, confidential or sensitive.} The main difference between these types of data is the kind of information to which they are related. 
 
 \textbf{Personal data} is '\emph{data which relates to a living individual who can be identified from those data OR from those data and other information which is in the possession of or is likely to come into the possession of the data controller (e.g. University) and includes any expression of opinion about the individual}'~\cite{website:dataprotectact}.
 
@@ -134,7 +134,7 @@ Let's consider operations that generate and kill information:
 \end{tabular}
 \end{align*}
 
-A more precise definition of \emph{gen} and \emph{kill} could be made considering also variable that are not exported directly, but are used in the definition of exported variable. But we decided to have simple \emph{gen} and \emph{kill} definition, and to improve it later for specific cases (please refer to section 2.3).\\
+A more precise definition of \emph{gen} and \emph{kill} could be made considering also variable that are not exported directly, but are used in the definition of exported variable. Anyway we decided to have simple \emph{gen} and \emph{kill} definition, and to improve it later for specific cases (please refer to section 2.3).\\
 %We can expand \emph{gen} and \emph{kill} definition:\\
 %\begin{align*}
 %\begin{tabular}{  l l }
@@ -164,7 +164,7 @@ It is now possible to define the equations of the analysis.
 SA_\textrm{$exit$}(p)\ =\ 
 \begin{cases}
 \emptyset\qquad if\ p\ is\ a\ final\ point\ \\ \\
-\cup\ \lbrace SA_\textrm{$entry$}(q)\ |\ q\ follows\ p\ in\ the\ CFG \rbrace 
+\cup\ \lbrace SA_\textrm{$entry$}(q)\ |\ q\ follows\ p\ in\ the\ CCFG \rbrace 
 \end{cases} \\ \\
 SA_\textrm{$entry$}(p)\ =\ \text{gen}_\textrm{SA}(p)\ \cup\ (SA_\textrm{$exit$}(p)\ \textbackslash\ \text{kill}_\textrm{SA}(p)\ )
 \end{gather*}
@@ -175,7 +175,7 @@ At the end of the analysis we will have two possible states:
 \item some variables are still present in our tables
 \end{itemize}
 The first state means that the examined program is \emph{SAFE}. Indeed, if no variables are present in our analysis memory, all the variables considered possibly unsafe have been removed because they are certified as non confidential data.\\
-On the other side, the second state means that the program is \emph{UNSAFE}. This is due to the fact that some variables remains in our analysis memory, confirming that these variables contain confidential data. Thus, our analysis is also capable of locating unsafe variables.
+On the other side, the second state means that the program is \emph{UNSAFE}. This is due to the fact that some variables remain in our analysis memory, confirming that these variables contain confidential data. Thus, our analysis is also capable of locating unsafe variables.
 
 \subsection{Difference between objects and primitive data types}
 \paragraph{}
@@ -197,10 +197,10 @@ Variable \emph{x} is exported with a method. In this case the \emph{gen} step wi
 The variable is copied from another one, and we know that it will be exported (notice that, in order to make this \emph{gen} step sound, we also have to know that variable \emph{x} will not change its value in the path between the copy and the exportation points). In this case the \emph{gen} step will add the record $\{x, y, n\}$ in the table into the \emph{gen} column. A later \emph{kill} (going backward after this statement) of the copied variable \emph{y} will remove the information added with this \emph{gen} step, and also the information related to the exportation of the \emph{x} variable.
 
 \item[\texttt{x = method(y)}] \hfill \\
-The variable is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. If the primitive variables involved as parameter are more than one, we will have a record like this: $\{x, x[y,x,...], n\}$.  A later \emph{kill} of the referred variable \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first variable \emph{x}. This is because, even if \emph{y} variable is \emph{SAFE}, the method that generates the first one may make use of confidential information, like other methods or variables belonging to its class, and so we cannot trust variable \emph{x}. In order to check the safeness of variable \emph{x}, we must expand the \emph{CFG} of this method.
+The variable is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. If the primitive variables involved as parameter are more than one, we will have a record like this: $\{x, x[y,x,...], n\}$.  A later \emph{kill} of the referred variable \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first variable \emph{x}. This is because, even if \emph{y} variable is \emph{SAFE}, the method that generates the first one may use confidential information, like other methods or variables belonging to its class, and so we cannot trust variable \emph{x}. In order to check the safeness of variable \emph{x}, we must expand the \emph{CCFG} of this method.
 
 \item[\texttt{x = method()}] \hfill \\
-The variable \emph{x} is generated. If, by expanding and inspecting the \emph{CFG} of this method, we find out (or we already know) that it's \emph{not confidential}, we can perform a \emph{kill} step. Otherwise, no steps are performed.
+The variable \emph{x} is generated. If, by expanding and inspecting the \emph{CCFG} of this method, we find out (or we already know) that it's \emph{not confidential}, we can perform a \emph{kill} step. Otherwise, no steps are performed.
 
 \end{description}
 
@@ -213,7 +213,7 @@ Object \emph{x} is exported with a method. In this case the \emph{gen} step will
 The object is referred from another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, y, n\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object (\emph{y}) will remove the information added with this \emph{gen} step, and also the information related to the exportation of the first object (\emph{x}).
 
 \item[\texttt{CClass x = new CClass(y)}] \hfill \\
-The object is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first object (\emph{x}). This is because, even if \emph{y} object is \emph{SAFE}, the creator of the first one may make use of confidential information, and so we cannot trust the \emph{x} object. In order to check the safeness of the \emph{x} object, we must expand the \emph{CFG} of its constructor.
+The object is used in the creation of another one, and the last one is exported. In this case the \emph{gen} step will add the record $\{x, x[y], n\}$ in the table into the \emph{gen} column. A later \emph{kill} of the referred object \emph{y} will remove the information added with this \emph{gen} step, but will not delete the information related to the exportation of the first object (\emph{x}). This is because, even if \emph{y} object is \emph{SAFE}, the creator of the first one may use confidential information, and so we cannot trust the \emph{x} object. In order to check the safeness of the \emph{x} object, we must expand the \emph{CCFG} of its constructor.
 
 \item[\texttt{CClass x = new CClass()}] \hfill \\
 The object \emph{x} is created. We cannot make any \emph{kill} step, because we don't know if the constructor of this object is \emph{SAFE}. As said for the previous case, we must expand and inspect its \emph{CFG}.
@@ -226,12 +226,11 @@ As we have just seen, primitive variables and objects have different behaviour i
 For the construction of our Control Flow Graph, we must use a different technique in object-oriented language with respect to an imperative language. This is due to the fact that in the object-oriented language  multiple classes exist within the same application, and thus our graph must be able to represent the application in its entirety, including the relationship between the various classes given by method calls.\\
 It has been developed an algorithm that allows the construction of CCFG of the application, considering also the relationships between the various classes. The algorithm consists of four steps:
 \begin{itemize}
-\item The first step is to create the CFG of the class in question. 
-\item In the second step, however, for each method inside the class, the class of the method is added to ours, and we are replacing the node that contains the method invocation, with the corresponding CFG. This operation continues until all the methods contained within the application are covered, including those present in the interior of the classes that are added in the course of work.  
+\item The first step is to create the CCFG of the class in question. 
+\item In the second step, however, for each method inside the class, the class of the method is added to ours, and we are replacing the node that contains the method invocation, with the corresponding CCFG. This operation continues until all the methods contained within the application are covered, including those present in the interior of the classes that are added in the course of work.  
 \item In the third step the update of the various edges of CCFG is made, so that they are connected in an appropriate manner on all sides.
-\item In the fourth step, the final one, once finished all the above steps, the algorithms returns the CCFG application.
+\item In the fourth step, the final one, once finished all the above steps, the algorithms returns the CCFG of the application.
 \end{itemize}
-
 \subsubsection{CCFG Constructor Algorithm}
 \lstset{basicstyle=\small\ttfamily, tabsize=2}
 \begin{lstlisting}
@@ -261,7 +260,6 @@ begin ConstructCCFG
 
 end ConstructCCFG
 \end{lstlisting}
-
 \subsection{Safeness Analysis Algorithm}
 \paragraph{}
 The following section shows the algorithm used to perform the safeness analysis, which was derived from the equations introduced in Section 2.2, applied to the CCFG of the application:
@@ -278,9 +276,6 @@ The following section shows the algorithm used to perform the safeness analysis,
 \>\> in[n]:= gen[n] $\cup$ (out[n]-kill[n]);\\
 \textbf{until} (in'[n]= in[n] \&\& out'[n]= out[n] for all n)
 \end{tabbing}    
-        
-
-
 
 %----------------------------------------------------------------------------------------
 %	3. Examples
@@ -307,7 +302,7 @@ We now apply our analysis to some examples written with the proposed simple vers
 \paragraph{}
 This example has been created in order to show how important can be a Class Constructor in considering a variable confidential or not. We first notice that we can have various possibilities when creating a new object:
 \begin{itemize}
-  \item constructor doesn't make use of confidential data
+  \item constructor doesn't use confidential data
   \item constructor USES confidential data
   \item parameters used in the constructor invocation contain confidential data
 \end{itemize}
@@ -323,7 +318,7 @@ If we apply our analysis to this example, we will have the following steps:
 We can see that it is important to expand completely a CCFG in order to discover all the interesting path. So, by expanding the CCFG of \emph{CustomClass} we can have two cases:
 \begin{itemize}
   \item constructor USES confidential data, so variables \emph{x} and \emph{y} cannot be killed, thus the application is \emph{UNSAFE}
-  \item constructor doesn't make use of confidential data, so variables \emph{x} and \emph{y} are  both killed and the application is \emph{SAFE}
+  \item constructor doesn't use confidential data, so variables \emph{x} and \emph{y} are  both killed and the application is \emph{SAFE}
 \end{itemize}
 
 \subsubsection{CCFG}
@@ -665,10 +660,10 @@ By only looking at \emph{MClass} object \emph{t} seems to be not confidential. A
 
 \section{Issues with a real Object Oriented Language}
 \paragraph{}
-This section will explore some specific features of the object oriented programming languages applied to our analysis, in order to see whether it works or it should be expanded. When necessary and possible, we propose a solution to extend the analysis to these feature. Descriptions may make use of examples with the basic pseudo-code already used in section 3, expanded with the required object oriented features.
+This section will explore some specific features of the object oriented programming languages applied to our analysis, in order to see whether it works or it should be expanded. When necessary and possible, we propose a solution to extend the analysis to these feature. Descriptions use examples with the basic pseudo-code already used in section 3, expanded with the required object oriented features.
 
 \subsection{Interfaces} \paragraph{}
-An interface is used in an object oriented language in order to specify a set of methods that classes must implements. In example, we can have the following interface:
+An interface is used in an object oriented language in order to specify a set of methods that classes must implement. In example, we can have the following interface:
 \begin{verbatim}
 public interface InterfaceI {
     int commonMethod();
@@ -740,7 +735,7 @@ In object oriented progrogramming language, classes can be derived from other cl
 A class that is derived from another class is called a subclass (also a derived class, extended class, or child class). The class from which the subclass is derived is called a superclass (also a base class or a parent class).
 
 Classes can be derived from classes that are derived from classes that are derived from classes, and so on, and ultimately derived from the topmost class, Object. Such a class is said to be descended from all the classes in the inheritance chain stretching back to Object.
-The idea of inheritance is simple but powerful: When you want to create a new class and there is already a class that includes some of the code that you want, you can derive your new class from the existing class. In doing this, you can reuse the fields and methods of the existing class without having to write (and debug!) them yourself.
+The idea of inheritance is simple but powerful: when you want to create a new class and there is already a class that includes some of the code that you want, you can derive your new class from the existing class. In doing this, you can reuse the fields and methods of the existing class without having to write (and debug!) them yourself.
 
 A subclass inherits all the members (fields, methods, and nested classes) from its superclass. Constructors are not members, so they are not inherited by subclasses, but the constructor of the superclass can be invoked from the subclass.
 
@@ -757,7 +752,7 @@ A reference variable can refer to any object of its declared type or any subtype
 
 In our analysis when we find a call to a method of an object we have to know if the method is a method of that object class or it is a superclass method. This information is given only when we find the definition of the object. Up to this point we do not know which method is refer the call. 
 
-Until the information is unknown, the object is insert in the list of the unsafe variable with the possible another variable used in the call of the method. When we know the class membership then we expand the method using the CCFG and we search if the method export the variable. In the case in which the method doesn't export variables, we eliminate the variable from the list. If inside the function/procedure we find another class method, we apply this recursively.
+Until the information is unknown, the object is insert in the list of the unsafe variable with the possible other variable used in the call of the method. When we know the class membership then we expand the method using the CCFG and we search if the method export the variable. In the case in which the method doesn't export variables, we eliminate the variable from the list. If inside the function/procedure we find another class method, we apply this recursively.
 
 \subsubsection{Overriding} \paragraph{}
 If a class inherits a method from its super class, then there is a chance to override the method provided that it is not marked final.
@@ -766,9 +761,9 @@ The benefit of overriding is: ability to define a behaviour that's specific to t
 
 In object-oriented terms, overriding means to override the functionality of an existing method.
 
-In our analysis when we find a call of a object's method override or not, we have to expand the method using CCFG and look for if the method in such way exports confidential informations. Thus when we find a method, we put inside the list of the unsafe variable the object and all the variable that are used by the method in the call. The element that will be inserted in the list will be like this:
+In our analysis when we find a call of an object's method overridden or not, we have to expand the method using CCFG and look for if the method in such way exports confidential informations. Thus when we find a method, we put inside the list of the unsafe variable the object and all the variable that are used by the method in the call. The element that will be inserted in the list will be like this:
 \begin{verbatim}
-   [ name_object, var_method, ...]
+   name_object [var_method, ...]
 \end{verbatim} 
 where the point can indicate that in the method can be called other method. So, there are no differences between the idea used for overriding method or not.
 
@@ -800,7 +795,7 @@ else
 \end{verbatim}
 
 In the case of recursion, our analysis works well and does not need to change, because once analyzed the code of the recursive method and seen if it is safe or not, there are no additional steps.\\
-Caution, however, must be made at the time of the construction of CCFG. This is because in the case of recursion, the control flow graph of the method must occur only once, adding an edge that creates the cycle, without having to replicate the CFG for each call. Indeed, if the method is analyzed only once we do not need to repeat the analysis. In this way we avoid the possibility of incurring into an infinite replication, or otherwise having a CCFG of large dimensions that in the end would be too heavy and useless.
+Caution, however, must be made at the time of the construction of CCFG. This is because in the case of recursion, the control flow graph of the method must occur only once, adding an edge that creates the cycle, without having to replicate the CCFG for each call. Indeed, if the method is analyzed only once we do not need to repeat the analysis. In this way we avoid the possibility of incurring into an infinite replication, or otherwise having a CCFG of large dimensions that in the end would be too heavy and useless.
 
 \subsection{Data Structures}
 \paragraph{}
@@ -831,20 +826,20 @@ The Safeness Analysis in Data Structures should only pay attention to the method
 \paragraph{}
 Android is not a hardware platform, but a software environment designed specifically for mobile phone or more generally for mobile devices. In general, the platform includes an operating system based on Linux, a rich toolkit of graphical interfaces, a development environment, multimedia support and more.
 
-\subsection{Differences between our language (simil-Java) and Android}
+\subsection{Differences between our language (simil-Java) and Java for Android}
 \paragraph{}
-The runtime environment of Android platform, consists instead of a core library and a virtual machine (VM): together constitute the development platform for Android. The VM of Android is a particular version of the Java Virtual Machine (called Dalvik), specially designed and optimized to run on hardware not performing, such as mobile phones in fact.\\
+The runtime environment of the Android platform consists of a core library and a virtual machine (VM): together constitute the development platform for Android. The VM of Android is a particular version of the Java Virtual Machine (called Dalvik), specially designed and optimized to run on not very powerful hardware, such as mobile phones.\\
 
-User applications are written in Java and run each in its JVM. Are developed with the integration of the package provided by the Android APIs that provide for interaction with the bluetooth, location or telephone, or for the management of the graphic interface and gestures, thus creating a layer of abstraction also on components hardware. Note that the distribution is not what Java ME is performed, but a version specially developed for Dalvik: Java code is compiled and translated it into byte code, then undergoes further processing in a file format called dex. This additional step allowed us to optimize the code for the JVM, and to disengage from legal problems with Oracle.
+User applications are written in Java and run each in its JVM. They are developed with the integration of the package provided by the Android APIs that provide interaction with the bluetooth, location, telephone, and the management of the graphic interface and gestures, thus creating a layer of abstraction also on hardware components. Note that the distribution is not Java ME, but it is a version specially developed for Dalvik: Java code is compiled and translated it into byte code, then undergoes further processing in a file format called dex. This additional step allowed us to optimize the code for the JVM, and to disengage from legal problems with Oracle.
 
 \subsubsection{Android app peculiarities~\cite{Burnette:2010:HAI:1893143}}
 \paragraph{}
-Android app are different from a normal java application. First of all, they uses different libraries written specifically for the Android environment. Anyway, there are many other differences.
+Android app are different from a normal java application. First of all, they use different libraries written specifically for the Android environment. Anyway, there are many other differences.
 \begin{itemize}
 \item One of the main concepts in an Android program is the Activity. An activity is responsible for the application lifecycle. Every application can define more activities, one for each phase of its execution. Every activity have 5 states: starting, running, paused, stopped, destroyed. 
 \item Intents are used to describe specific actions. More formally, they are abstract descriptions of operations to be performed. They are used in the launch of an activity~\cite{website:androiddev}
-\item An Android app makes large use of xml files. The most important one is the AndroidManifest. This file is located into the root of an Android project and describe all the activities performed in the app. Moreover, it also define some constraints for the application which state the permissions. In example, a permission is needed to use location related methods and libraries.\\ Other important xml files are the main.xml file in the layout directory, that describes objects containers and their behaviour on the screen, and the various variables files, like string.xml, that contains useful variables for the application.
-\item R class is automatically created in each project and is used to link all the assets described in the xml files (layout, values, \ldots) to the other program classes.
+\item An Android app makes large use of xml files. The most important one is the AndroidManifest. This file is located into the root of an Android project and describe all the activities performed in the app. Moreover, it also defines some constraints for the application which state the permissions. In example, a permission is needed to use location related methods and libraries.\\ Other important xml files are the main.xml file in the layout directory, that describes objects containers and their behaviour on the screen, and the various variables files, like string.xml, that contains useful variables for the application.
+\item R class is automatically created in each project and is used to link all the assets described in the xml files (layout, values, \ldots) to the elements in the program classes.
 \end{itemize} 
 
 \subsection{Analysis adaptation to Android Environment}
@@ -857,8 +852,8 @@ Android app are different from a normal java application. First of all, they use
 
 %Nota 2: if we encounter a method that exports confidential data, but this method is not allowed by the AndroidManifest, it will not cause a \emph{gen} step.
 
-Our analysis needs some adaptation in order to be Applied to Android applications. First, we must consider the various libraries provided by Android. In Safeness Analysis all methods that come from the Android libraries and create and/or modify objects are defined SAFE. All methods that do not comply with this rule, so methods that exports confidential data, are considered UNSAFE and they cause a \emph{gen} step when they are collected by the SA.\\
-Second, we must consider applications that use confidential data where this behaviour is allowed by the AndroidManifest. As explained in the previous section, all the activities of an app are contained into that xml file. Anyway we do not need to check activity that are not present in the Manifest, because an activity like these will not be executed by the application and will possibly cause an exception (thus a developer normally delete this possibility during the testing phase).\\
+Our analysis needs some adaptation in order to be applied to Android applications. First, we must consider the various libraries provided by Android. In Safeness Analysis all methods that come from the Android libraries and create and/or modify objects are defined SAFE. All methods that do not comply with this rule, so methods that export confidential data, are considered UNSAFE and they cause a \emph{gen} step when they are collected by the SA.\\
+Second, we must consider applications that use confidential data where this behaviour is allowed by the AndroidManifest. As explained in the previous section, all the activities of an app are contained into that xml file. Anyway we do not need to check activity that are not present in the Manifest, because an activity like these will not be executed by the application and will possibly cause an exception (thus a developer normally deletes this possibility during the testing phase).\\
 The AndroidManifest also define the permissions of the application. Methods whose behaviour is not allowed by the permissions are not executed, and the application will be stopped. Anyway, this can lead to unexpected behaviour. In example, we may have an gaming application and allow internet connections in the manifest, in order to send/receive data for place ourself in an on-line rank after each match. But, this game may be a malicious application that also sends outside confidential data that we do not want to share, thanks to the permission in the manifest. Moreover, it seems that an app can anyhow access some data even if it has no permissions~\cite{website:majorvuln}~\cite{website:zeroperm}. This means that we must check all the methods allowed by the Manifest.
 
 \subsection{Methods and data structure selection}
@@ -869,10 +864,10 @@ We still need something in order to perform the Safeness Analysis in the Android
 \item methods that are \emph{UNSAFE} (so methods that generate \emph{confidential data})
 \end{itemize}
 Notice that we refer to methods supplied by the Android libraries, not to methods defined by the developer. Indeed, the last ones are explored by the analysis itself.\\
-Here we present a small subsets of methods that exports data that we will use it the final example. Anyway, in a real analysis we will need much more methods, with respect to the libraries used in the program.\\
+Here we present a small subsets of methods that export data (used also in the final example). Anyway, in a real analysis we will need much more methods, with respect to the libraries used in the program.\\
 
 \subsubsection{Methods that exports data}
-\noindent Save a File on Internal Storage:
+\noindent Save a file on Internal Storage:
 \begin{description}
 \item[{File Class constructor + getFilesDir()}] \hfill \\It creates a new file in an internal directory of the app.
 \item[{createTempFile()}] \hfill \\It creates an empty temporary file using the given prefix and suffix as part of the file name.
@@ -887,7 +882,7 @@ Here we present a small subsets of methods that exports data that we will use it
 
 \noindent Sending HTTP Post data:
 \begin{description}
-\item[{HttpPost Class constructor + setEntity()}] \hfill \\The combination of these two methods allow to send data through an http post.
+\item[{HttpPost Class constructor + setEntity()}] \hfill \\The combination of these two methods allows to send data through an http post.
 \end{description}
 
 %\noindent \textbf{}
@@ -926,17 +921,17 @@ This section is devoted to an example applied to a real Android application. Thi
 Please refer to Appendix A (p.~\pageref{app:appendixA}) for the code of the example.
 
 \subsubsection{Description}
-We implemented a simple application that show the instantaneous position of the device. The position is given by the latitude and the longitude. When the position changes, it is automatically updated. Now we explain how works this app.
+We implemented a simple application that shows the instantaneous position of the device. The position is given by the latitude and the longitude. When the position changes, it is automatically updated. Now we explain how works this app.
 
-The first screen that we find is a simple screen with a button that when we press it, it redirect us to the second screen that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device change its location the values of longitude and latitude are updated automatically. 
+The first screen that we find is a simple screen with a button that when we press it, it redirects us to the second screen that shows the current location of the device. The localization is done implementing the LocationListener interface and the data of longitude and latitude are given from the method getLongitude() and getLatitude(), respectively. The aim of the implemented class is to show the current position of the device, so when the device changes its location the values of longitude and latitude are updated automatically. 
 
 The confidential data are contained in the variable longitude and latitude, then we have to pay attention if they are exported in some ways. Obviously if they are only modified and not exported in some way, the application is classified as \emph{SAFE}.
 
-The expected result of the analysis is that there are no unsafe variable because there are no method that export the confidential data, namely the value of the longitude and the latitude. During the analysis in fact some variables are inserted into the list of unsafe variables as "possible unsafe variable" but in the end, all of them are deleted from it. 
+The expected result of the analysis is that there are no unsafe variable because there are no methods that export the confidential data, namely the value of the longitude and the latitude. During the analysis in fact some variables are inserted into the list of unsafe variables as "possible unsafe variable" but in the end, all of them are deleted from it. 
 
-Let's take a look to the AVPtest file, which contains the main class. Inside it we see that it calls a method that create the activity associated to GeoLocation class, so our attention is focused on this class. Thus We expand this class and analyze it.
+Let's take a look to the AVPtest file, which contains the main class. Inside it we see that it calls a method that creates the activity associated to GeoLocation class, so our attention is focused on this class. Thus we expand this class and analyze it.
 
-In the GeoLocation class, we can see that there are a new call to the constructor LocationUpdateHandler() using the method requestLocationUpdates(...). With that, the program has created a listener that, every time that the position changes, it starts the function LocationUpdateHandler() that use the implemented function onLocationChanged(...), for this reason we expand this function. Inside it we can see that there are only few methods that could export confidential data, that's to say the methods involved in the creation of the file. These methods will thus cause a \emph{gen step}. Anyway, by executing the analysis, we will see that the file will not contain confidential data and we will obtain a \emph{kill step} in the analysis. Our analysis will also cause some others kill, but the killed object were not exported before, so these kills are not important. In the end of our analysis we obtain the expected result.
+In the GeoLocation class, we can see that there are a new call to the constructor LocationUpdateHandler() using the method requestLocationUpdates(...). With that, the program has created a listener that, every time that the position changes, it starts the function LocationUpdateHandler() that uses the implemented function onLocationChanged(...), for this reason we expand this function. Inside it we can see that there are only few methods that could export confidential data, that's to say the methods involved in the creation of the file. These methods will thus cause a \emph{gen step}. Anyway, by executing the analysis, we will see that the file will not contain confidential data and we will obtain a \emph{kill step} in the analysis. Our analysis will also cause some others kill, but the killed object were not exported before, so these kills are not important. In the end of our analysis we obtain the expected result.
 
 Instead, if we are interested to an unsafe application, we have to modify the point in the application in which the string contained in the file is created. In example, we can insert the latitude and longitude values into that string. In this case the application can be considered malicious and so \emph{UNSAFE}.
 
@@ -947,11 +942,11 @@ Please refer to Appendix B (p.~\pageref{app:appendixB}) for the CCFG and to Appe
 
 \section{Conclusions}
 \paragraph{}
-At this moment, we haven't found any sound analysis for Android applications. So, our analysis appear to be an important starting point for possible research in this field. Indeed, such analysis may have more possible uses. The first one could be a method to certify an application by the developer, in order to guarantee that the application itself has no malicious behaviours. The second one could be to introduce some basics requirements by the Android market in order to allow the distribution of an application. If the application does not meet these requirement, it won't be uploaded into the market. 
+At this moment, we haven't found any sound analysis for Android applications. So, our analysis appears to be an important starting point for possible research in this field. Indeed, such analysis may have more possible uses. The first one could be a method to certify an application by the developer, in order to guarantee to the final user that the application itself has no malicious behaviours. The second one could be to introduce some basics requirements by the Android market in order to allow the distribution of an application. If the application does not meet these requirement, it won't be uploaded into the market. 
 
 \subsection{Future developments}
 \paragraph{}
-We have already proposed some further improvements for the future. The first one could be a mean to avoid the replication of the same CCFG for same methods, as we have already seen in recursion. Another improvement could be the differentiation of the CCFG into normal CCFG and exceptions CCFG, as proposed in ~\cite{ccfgexception}. Other enhancements could be to divide the safeness into more levels, so different safeness conditions (in example, consider also the video output as unsafe), and consider also other programming languages (java is the most used in Android development, but other languages can equally be used).
+In the following part we propose some further improvements for the future. The first one could be a manner to avoid the replication of the same CCFG for same methods, as we have already seen in recursion. Another improvement to the analysis could be the differentiation of the CCFG into normal CCFG and exceptions CCFG, as proposed in ~\cite{ccfgexception}. Other enhancements could be to divide the safeness into more levels, in order to have different safeness conditions (in example, one may decide to consider also the video output as unsafe), and consider also other programming languages (java is the most used in Android development, but other languages can equally be used).
 
 
 %----------------------------------------------------------------------------------------
