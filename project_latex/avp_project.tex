@@ -936,164 +936,8 @@ In the end of our analysis we obtain the expected result.
 Instead, if we are interested to an unsafe application, we have to modify the point in the application in which the position is updated. In this point we can insert a simple command that send the current position of the device to a malicious user or save its position in a file and sends it later (we can see some examples of method that save the information in a file and share it with other users in the section 'Methods and data structure selection').
 
 \subsubsection{CCFG}
-\begin{figure*} [ht]
-\begin{center}
-% We need layers to draw the block diagram
-\pgfdeclarelayer{background}
-\pgfdeclarelayer{foreground}
-\pgfsetlayers{background,main,foreground}
 
-% Define block styles
-\tikzstyle{block} = [rectangle, draw, align=left]
-\tikzstyle{line} = [draw, -latex']
-\tikzstyle{every node}=[font=\footnotesize]
-
-\hspace*{-7mm}\scalebox{0.85}{
-\begin{tikzpicture}[node distance = 1cm, auto][every node/.style={inner sep=0,outer sep=0}]
-
-    % AVPTest nodes
-    \node [block] (AVP1) {void onCreate(Bundle savedInstanceState)  \{ };
-    \node [block, below of=AVP1] (AVP2) {super.onCreate savedInstanceState)};
-    \node [block, below of=AVP2] (AVP3) {setContentView(R.layout.main);};
-    \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc\_button);};
-    \node [block, below of=AVP4] (AVP5) {getlocButton.setOnClickListener(this);};
-	\node [block, below of=AVP5, node distance=4em] (AVP6) {public void onClick(View v) \{ };
-	\node [block, below of=AVP6] (AVP7) {switch (v.getId())  \{ };
-    \node [block, below of=AVP7] (AVP8) {case R.id.getloc\_button:};
-    \node [block, below of=AVP8](AVP9) {Intent i = new Intent(this, GetLocation.class);};
-    \node [block, below of=AVP9] (AVP10) {startActivity(i);};
-    \node [block, below of=AVP10] (AVP11) {break; \}\} };
-    
-    % GetLocation class nodes
-    \node [block, right of=AVP1, node distance=10cm] (GL1) {private LocationManager locationManager;};
-    \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
-    \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
-    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
-    \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS\_PROVIDER, 0,\\ \qquad 0, new LocationUpdateHandler()); };
-    \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \} };
-
-    % LocationUpdateHandler class nodes
-    \node [block, below of=GL5, node distance=8em] (LUH1) {public void onLocationChanged(Location loc) \{ };
-    \node [block, below of=LUH1] (LUH2) {int lat = (int) (loc.getLatitude() * 1E6); };
-    \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
-	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc\_content); };
-	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "$\textbackslash\text{n}$" + "Longitude: "+ lng); \} };
-
-    %background shapes 
-    \begin{pgfonlayer}{background}
-        %AVPTest Class
-        \path (AVP4.west |- AVP1.north)+(-0.2,0.2) node (a) {};
-        \path (AVP11.south -| AVP4.east)+(0.2,-0.4) node (b) {};
-        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
-        %GetLocation Class
-        \path (GL4.west |- GL1.north)+(-0.2,0.2) node (a) {};
-        \path (LUH5.south -| GL4.east)+(0.2,-1) node (b) {};
-        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
-        %LocationUpdateHandler Class
-        \path (LUH4.west |- LUH1.north)+(-0.2,0.2) node (a) {};
-        \path (LUH5.south -| LUH4.east)+(0.2,-0.4) node (b) {};
-        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
-    \end{pgfonlayer}  
-        
-    %class labels
-    \path (AVP11.south)+(-2.3,-0.6) node (AVPTest) {\textbf{AVPTest Class}};
-    \path (LUH5.south)+(-4,-1.2) node (GetLocation) {\textbf{GetLocation Class}};
-    \path (LUH5.south)+(-2.5,-0.6) node (LocationUpdateHandler) {\textbf{LocationUpdateHandler Class}};
-    
-    % Draw arrows between blocks internal to classes
-    \path [line] (AVP1) -- (AVP2);
-    \path [line] (AVP2) -- (AVP3);
-    \path [line] (AVP3) -- (AVP4);  
-    \path [line] (AVP4) -- (AVP5);  
-    \path [line] (AVP6) -- (AVP7);  
-    \path [line] (AVP7) -- (AVP8);  
-    \path [line] (AVP8) -- (AVP9);  
-    \path [line] (AVP9) -- (AVP10);  
-    \path [line] (AVP10) -- (AVP11);
-    \path [line] (GL1) -- (GL2);
-    \path [line] (GL2) -- (GL3);      
-    \path [line] (GL3) -- (GL4);
-    \path [line] (GL4) -- (GL5);
-    \path [line] (GL5) -- (GL6);
-    \path [line] (LUH1) -- (LUH2);
-    \path [line] (LUH2) -- (LUH3);
-    \path [line] (LUH3) -- (LUH4);
-    \path [line] (LUH4) -- (LUH5);
-    
-    %curved arrows
-    \begin{scope}[looseness=1.8]
-        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL1);
-        \path [draw, ->] (GL5) edge[out=0,in=0,->]  node [right] {} (LUH1);
-        %\path [draw, ->] (T3) edge[out=180,in=180,->, bend right=73]  node [left] {} (T6);
-    \end{scope} 
-     
-\end{tikzpicture}
-}
-\end{center}
-\end{figure*}
 \subsubsection{Tables}
-\begin{figure*} [ht]
-\begin{align*}
-\begin{tabular}{|l|*{3}{c|}}
-  \hline
-  n & classname & gen & kill  \\
-  \hline 
-  5 & AVPtest & \{geoLocButton[this], 5, AVPtest\} & \\
-  11 & AVPtest &  & \\
-  10 & AVPtest &  & \\
-  9 & AVPtest & \{i[this], 9, AVPtest\} & \\
-  6 & GetLocation &  & \\
-  5 & GetLocation & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} & \\
-  5 & LocationUpdateHandler &  & \\
-  4 & LocationUpdateHandler &  & \\
-  3 & LocationUpdateHandler &  & \\
-  2 & LocationUpdateHandler &  & \\
-  1 & LocationUpdateHandler &  & \\
-  4 & GetLocation & & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} \\
-  3 & GetLocation & & \\
-  2 & GetLocation & & \\
-  1 & GetLocation & & \\
-  8 & AVPtest &  & \{i[this], 9, AVPtest\} \\
-  7 & AVPtest &  & \\
-  6 & AVPtest &  & \\
-  4 & AVPtest &  & \{geoLocButton[this], 5, AVPtest\} \\
-  3 & AVPtest &  & \\
-  2 & AVPtest &  & \\
-  1 & AVPtest &  & \\  
-  \hline
-\end{tabular}
-\end{align*}
-\begin{align*}
-\begin{tabular}{|l|*{3}{c|}}
-  \hline
-  n & classname & entry & exit  \\
-  \hline 
-  5 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  11 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  10 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  9 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  6 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  5 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  5 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  4 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  3 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  2 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  1 & LocationUpdateHandler & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  4 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this]]\} \\
-  3 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  2 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  1 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  8 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this]\} \\
-  7 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  6 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  4 & AVPtest & \{geoLocButton[this]\} &  \\
-  3 & AVPtest &  & \\
-  2 & AVPtest &  & \\
-  1 & AVPtest &  & \\
-  \hline
-\end{tabular}
-\end{align*}
-\end{figure*}
 %----------------------------------------------------------------------------------------
 %	6. Conclusions
 %----------------------------------------------------------------------------------------
@@ -1245,6 +1089,165 @@ public class GetLocation extends Activity {
 
 </manifest>
 \end{lstlisting}
+
+\label{app:appendixB}
+\section{Appendix: example CCFG}
+\begin{center}
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, align=left]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{every node}=[font=\footnotesize]
+
+\hspace*{-7mm}\scalebox{0.85}{
+\begin{tikzpicture}[node distance = 1cm, auto][every node/.style={inner sep=0,outer sep=0}]
+
+    % AVPTest nodes
+    \node [block] (AVP1) {void onCreate(Bundle savedInstanceState)  \{ };
+    \node [block, below of=AVP1] (AVP2) {super.onCreate savedInstanceState)};
+    \node [block, below of=AVP2] (AVP3) {setContentView(R.layout.main);};
+    \node [block, below of=AVP3](AVP4) {View getlocButton = findViewById(R.id.getloc\_button);};
+    \node [block, below of=AVP4] (AVP5) {getlocButton.setOnClickListener(this);};
+	\node [block, below of=AVP5, node distance=4em] (AVP6) {public void onClick(View v) \{ };
+	\node [block, below of=AVP6] (AVP7) {switch (v.getId())  \{ };
+    \node [block, below of=AVP7] (AVP8) {case R.id.getloc\_button:};
+    \node [block, below of=AVP8](AVP9) {Intent i = new Intent(this, GetLocation.class);};
+    \node [block, below of=AVP9] (AVP10) {startActivity(i);};
+    \node [block, below of=AVP10] (AVP11) {break; \}\} };
+    
+    % GetLocation class nodes
+    \node [block, right of=AVP1, node distance=10cm] (GL1) {private LocationManager locationManager;};
+    \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
+    \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
+    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
+    \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS\_PROVIDER, 0,\\ \qquad 0, new LocationUpdateHandler()); };
+    \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \} };
+
+    % LocationUpdateHandler class nodes
+    \node [block, below of=GL5, node distance=8em] (LUH1) {public void onLocationChanged(Location loc) \{ };
+    \node [block, below of=LUH1] (LUH2) {int lat = (int) (loc.getLatitude() * 1E6); };
+    \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
+	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc\_content); };
+	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "$\textbackslash\text{n}$" + "Longitude: "+ lng); \} };
+
+    %background shapes 
+    \begin{pgfonlayer}{background}
+        %AVPTest Class
+        \path (AVP4.west |- AVP1.north)+(-0.2,0.2) node (a) {};
+        \path (AVP11.south -| AVP4.east)+(0.2,-0.4) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %GetLocation Class
+        \path (GL4.west |- GL1.north)+(-0.2,0.2) node (a) {};
+        \path (LUH5.south -| GL4.east)+(0.2,-1) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+        %LocationUpdateHandler Class
+        \path (LUH4.west |- LUH1.north)+(-0.2,0.2) node (a) {};
+        \path (LUH5.south -| LUH4.east)+(0.2,-0.4) node (b) {};
+        \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
+    \end{pgfonlayer}  
+        
+    %class labels
+    \path (AVP11.south)+(-2.3,-0.6) node (AVPTest) {\textbf{AVPTest Class}};
+    \path (LUH5.south)+(-4,-1.2) node (GetLocation) {\textbf{GetLocation Class}};
+    \path (LUH5.south)+(-2.5,-0.6) node (LocationUpdateHandler) {\textbf{LocationUpdateHandler Class}};
+    
+    % Draw arrows between blocks internal to classes
+    \path [line] (AVP1) -- (AVP2);
+    \path [line] (AVP2) -- (AVP3);
+    \path [line] (AVP3) -- (AVP4);  
+    \path [line] (AVP4) -- (AVP5);  
+    \path [line] (AVP6) -- (AVP7);  
+    \path [line] (AVP7) -- (AVP8);  
+    \path [line] (AVP8) -- (AVP9);  
+    \path [line] (AVP9) -- (AVP10);  
+    \path [line] (AVP10) -- (AVP11);
+    \path [line] (GL1) -- (GL2);
+    \path [line] (GL2) -- (GL3);      
+    \path [line] (GL3) -- (GL4);
+    \path [line] (GL4) -- (GL5);
+    \path [line] (GL5) -- (GL6);
+    \path [line] (LUH1) -- (LUH2);
+    \path [line] (LUH2) -- (LUH3);
+    \path [line] (LUH3) -- (LUH4);
+    \path [line] (LUH4) -- (LUH5);
+    
+    %curved arrows
+    \begin{scope}[looseness=1.8]
+        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL1);
+        \path [draw, ->] (GL5) edge[out=0,in=0,->]  node [right] {} (LUH1);
+        %\path [draw, ->] (T3) edge[out=180,in=180,->, bend right=73]  node [left] {} (T6);
+    \end{scope} 
+     
+\end{tikzpicture}
+}
+\end{center}
+\label{app:appendixC}
+\section{Appendix: example tables}
+\begin{center}
+\begin{small}
+\begin{tabular}{|l|c|*{2}{p{7cm}|}}
+  \hline
+  n & classname & gen & kill  \\
+  \hline 
+  5 & AVPtest & \{geoLocButton[this], 5, AVPtest\} & \\
+  11 & AVPtest &  & \\
+  10 & AVPtest &  & \\
+  9 & AVPtest & \{i[this], 9, AVPtest\} & \\
+  6 & GetLocation &  & \\
+  5 & GetLocation & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} & \\
+  5 & LocationUpd &  & \\
+  4 & LocationUpd &  & \\
+  3 & LocationUpd &  & \\
+  2 & LocationUpd &  & \\
+  1 & LocationUpd &  & \\
+  4 & GetLocation & & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} \\
+  3 & GetLocation & & \\
+  2 & GetLocation & & \\
+  1 & GetLocation & & \\
+  8 & AVPtest &  & \{i[this], 9, AVPtest\} \\
+  7 & AVPtest &  & \\
+  6 & AVPtest &  & \\
+  4 & AVPtest &  & \{geoLocButton[this], 5, AVPtest\} \\
+  3 & AVPtest &  & \\
+  2 & AVPtest &  & \\
+  1 & AVPtest &  & \\  
+  \hline
+\end{tabular}
+\\
+\begin{tabular}{|l|c|*{2}{p{7cm}|}}
+  \hline
+  n & classname & entry & exit  \\
+  \hline 
+  5 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  11 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  10 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  9 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  6 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  5 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  5 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  4 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  3 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  2 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  1 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
+  4 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this]]\} \\
+  3 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  2 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  1 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
+  8 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this]\} \\
+  7 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  6 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
+  4 & AVPtest & \{geoLocButton[this]\} &  \\
+  3 & AVPtest &  & \\
+  2 & AVPtest &  & \\
+  1 & AVPtest &  & \\
+  \hline
+\end{tabular}
+\end{small}
+\end{center}
 
 %----------------------------------------------------------------------------------------
 %	END OF DOCUMENT
