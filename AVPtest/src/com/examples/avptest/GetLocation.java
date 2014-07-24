@@ -1,5 +1,8 @@
 package com.examples.avptest;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -11,6 +14,9 @@ import android.widget.TextView;
 public class GetLocation extends Activity {
 
 	private LocationManager locationManager;
+	String filename = "testfile";
+	String str = "Not confidential data";
+	FileOutputStream outputStream;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +32,26 @@ public class GetLocation extends Activity {
 	public class LocationUpdateHandler implements LocationListener {
 
 		@Override
-		public void onLocationChanged(Location loc) {
+		public void onLocationChanged(Location loc)  {
 			int lat = (int) (loc.getLatitude() * 1E6);
 			int lng = (int) (loc.getLongitude() * 1E6);
 			
 			TextView myLocationText = (TextView) findViewById(R.id.getloc_content);
 			myLocationText.setText("Latitude: " + lat + "\n" + "Longitude: "
 					+ lng);
+			
+			System.out.println("Ciao");
+			
+
+			try {
+				outputStream = openFileOutput("testfile2", Context.MODE_PRIVATE);
+				outputStream.write(str.getBytes());
+				outputStream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+			
 		}
 
 		@Override

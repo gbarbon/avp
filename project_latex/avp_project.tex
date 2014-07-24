@@ -408,7 +408,7 @@ We present here two possible version of tables. The first one show the case in w
   \hline 
   3 & \{y \} & \\ 
   2 & \{y, x\} & \{y \}\\
-  1 & \{y, x\} & \{y, x\} \\
+  1 & \{y\} & \{y, x\} \\
   \hline
 \end{tabular}
 \end{align*}
@@ -1021,10 +1021,14 @@ import android.widget.TextView;
 public class GetLocation extends Activity {
 
 	private LocationManager locationManager;
+	FileOutputStream outputStream;
+    String str;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		str = "Not confidential data";
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
@@ -1043,6 +1047,14 @@ public class GetLocation extends Activity {
 			TextView myLocationText = (TextView) findViewById(R.id.getloc_content);
 			myLocationText.setText("Latitude: " + lat + "\n" + "Longitude: "
 					+ lng);
+
+			try {
+				outputStream = openFileOutput("testfile", Context.MODE_PRIVATE);
+				outputStream.write(str.getBytes());
+				outputStream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -1120,10 +1132,11 @@ public class GetLocation extends Activity {
     \node [block, below of=AVP10] (AVP11) {break; \}\} };
     
     % GetLocation class nodes
-    \node [block, right of=AVP1, node distance=10cm] (GL1) {private LocationManager locationManager;};
+    \node [block, right of=AVP1, node distance=10cm] (GL1) {private LocationManager locationManager;\\	 FileOutputStream outputStream;\\ String str;};
     \node [block, below of=GL1, node distance=4em] (GL2) {protected void onCreate(Bundle savedInstanceState)  \{ };
     \node [block, below of=GL2] (GL3) {super.onCreate(savedInstanceState);};
-    \node [block, below of=GL3] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
+    \node [block, below of=GL3] (GL3bis) {str = "Not confidential data";};
+    \node [block, below of=GL3bis] (GL4) {locationManager = (LocationManager) getSystemService(Context.LOCATION\_SERVICE);};
     \node [block, below of=GL4] (GL5) {locationManager.requestLocationUpdates(LocationManager.GPS\_PROVIDER, 0,\\ \qquad 0, new LocationUpdateHandler()); };
     \node [block, below of=GL5] (GL6) {setContentView(R.layout.getloc); \} };
 
@@ -1133,6 +1146,7 @@ public class GetLocation extends Activity {
     \node [block, below of=LUH2] (LUH3) {int lng = (int) (loc.getLongitude() * 1E6);};
 	\node [block, below of=LUH3] (LUH4) {TextView myLocationText = (TextView) findViewById(R.id.getloc\_content); };
 	\node [block, below of=LUH4] (LUH5) {myLocationText.setText("Latitude: " + lat + "$\textbackslash\text{n}$" + "Longitude: "+ lng); \} };
+	\node [block, below of=LUH5, node distance=1.5cm] (LUH6) {outputStream = openFileOutput("testfile", Context.MODE\_PRIVATE);\\ outputStream.write(str.getBytes());\\ outputStream.close();};
 
     %background shapes 
     \begin{pgfonlayer}{background}
@@ -1142,18 +1156,18 @@ public class GetLocation extends Activity {
         \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
         %GetLocation Class
         \path (GL4.west |- GL1.north)+(-0.2,0.2) node (a) {};
-        \path (LUH5.south -| GL4.east)+(0.2,-1) node (b) {};
+        \path (LUH6.south -| GL4.east)+(0.2,-1) node (b) {};
         \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
         %LocationUpdateHandler Class
         \path (LUH4.west |- LUH1.north)+(-0.2,0.2) node (a) {};
-        \path (LUH5.south -| LUH4.east)+(0.2,-0.4) node (b) {};
+        \path (LUH6.south -| LUH4.east)+(0.2,-0.4) node (b) {};
         \path[rounded corners, draw=black!100, dashed] (a) rectangle (b);
     \end{pgfonlayer}  
         
     %class labels
     \path (AVP11.south)+(-2.3,-0.6) node (AVPTest) {\textbf{AVPTest Class}};
-    \path (LUH5.south)+(-4,-1.2) node (GetLocation) {\textbf{GetLocation Class}};
-    \path (LUH5.south)+(-2.5,-0.6) node (LocationUpdateHandler) {\textbf{LocationUpdateHandler Class}};
+    \path (LUH6.south)+(-4,-1.2) node (GetLocation) {\textbf{GetLocation Class}};
+    \path (LUH6.south)+(-2.5,-0.6) node (LocationUpdateHandler) {\textbf{LocationUpdateHandler Class}};
     
     % Draw arrows between blocks internal to classes
     \path [line] (AVP1) -- (AVP2);
@@ -1165,18 +1179,20 @@ public class GetLocation extends Activity {
     \path [line] (AVP8) -- (AVP9);  
     \path [line] (AVP9) -- (AVP10);  
     \path [line] (AVP10) -- (AVP11);
-    \path [line] (GL2) -- (GL3);      
-    \path [line] (GL3) -- (GL4);
+    \path [line] (GL2) -- (GL3);
+    \path [line] (GL3) -- (GL3bis);      
+    \path [line] (GL3bis) -- (GL4);
     \path [line] (GL4) -- (GL5);
     \path [line] (GL5) -- (GL6);
     \path [line] (LUH1) -- (LUH2);
     \path [line] (LUH2) -- (LUH3);
     \path [line] (LUH3) -- (LUH4);
     \path [line] (LUH4) -- (LUH5);
+    \path [line] (LUH5) -- (LUH6);
     
     %curved arrows
     \begin{scope}[looseness=1.8]
-        \path [draw, ->] (AVP9) edge[out=0,in=180,->]  node [left] {} (GL2);
+        \path [draw, ->] (AVP10) edge[out=0,in=180,->]  node [left] {} (GL2);
         \path [draw, ->] (GL5) edge[out=0,in=0,->]  node [right] {} (LUH1);
         \path [draw, ->, dashed] (AVP5) edge[out=180,in=180,->]  node [left] {} (AVP6);
     \end{scope} 
@@ -1186,67 +1202,67 @@ public class GetLocation extends Activity {
 \end{center}
 \label{app:appendixC}
 \section{Appendix: example tables}
-\begin{center}
+\begin{align*}
 \begin{small}
-\begin{tabular}{|l|c|*{2}{p{7cm}|}}
+\begin{tabular}{|l|*{3}{c|}}
   \hline
   n & classname & gen & kill  \\
   \hline 
-  5 & AVPtest & \{geoLocButton[this], 5, AVPtest\} & \\
-  11 & AVPtest &  & \\
-  10 & AVPtest &  & \\
-  9 & AVPtest & \{i[this], 9, AVPtest\} & \\
-  6 & GetLocation &  & \\
-  5 & GetLocation & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} & \\
+  7 & GetLocation & & \\
+  6 & LocationUpd & \{str, 6, LocationUpd\} & \\
   5 & LocationUpd &  & \\
-  4 & LocationUpd &  & \\
+  4 & LocationUpd &  & \{myLocationText, 4, LocationUpd\}\\
   3 & LocationUpd &  & \\
   2 & LocationUpd &  & \\
   1 & LocationUpd &  & \\
-  4 & GetLocation & & \{LocationManager[new LocationUpdateHandler()], 5, GetLocation\} \\
+  6 & GetLocation & & \\
+  5 & GetLocation & & \{str, 5, GetLocation\}\\
+  4 & GetLocation & & \\
   3 & GetLocation & & \\
   2 & GetLocation & & \\
-  1 & GetLocation & & \\
-  8 & AVPtest &  & \{i[this], 9, AVPtest\} \\
+  10 & AVPtest &  & \\
+  9 & AVPtest &  & \{i, 9, AVPtest\}\\
+  8 & AVPtest &  & \\
   7 & AVPtest &  & \\
   6 & AVPtest &  & \\
-  4 & AVPtest &  & \{geoLocButton[this], 5, AVPtest\} \\
+  5 & AVPtest &  & \\
+  4 & AVPtest &  & \{geoLocButton, 4, AVPtest\} \\
   3 & AVPtest &  & \\
   2 & AVPtest &  & \\
   1 & AVPtest &  & \\  
   \hline
 \end{tabular}
-\\
-\begin{tabular}{|l|c|*{2}{p{7cm}|}}
+\qquad
+\begin{tabular}{|l|*{3}{c|}}
   \hline
   n & classname & entry & exit  \\
   \hline 
-  5 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  11 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  10 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  9 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  6 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  5 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  5 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  4 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  3 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  2 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  1 & LocationUpd & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} \\
-  4 & GetLocation & \{geoLocButton[this,i[this,LocationManager[new LocationUpdateHandler()]]\} & \{geoLocButton[this,i[this]]\} \\
-  3 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  2 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  1 & GetLocation & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this,i[this]]\} \\
-  8 & AVPtest & \{geoLocButton[this,i[this]]\} & \{geoLocButton[this]\} \\
-  7 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  6 & AVPtest & \{geoLocButton[this]\} & \{geoLocButton[this]\} \\
-  4 & AVPtest & \{geoLocButton[this]\} &  \\
+  7 & GetLocation & & \\
+  6 & LocationUpd & \{str\} & \\
+  5 & LocationUpd & \{str\} & \{str\}\\
+  4 & LocationUpd & \{str\} & \{str\}\\
+  3 & LocationUpd & \{str\} & \{str\}\\
+  2 & LocationUpd & \{str\} & \{str\}\\
+  1 & LocationUpd & \{str\} & \{str\}\\
+  6 & GetLocation & \{str\} & \{str\}\\
+  5 & GetLocation & & \{str\}\\
+  4 & GetLocation & & \\
+  3 & GetLocation & & \\
+  2 & GetLocation & & \\
+  10 & AVPtest &  & \\
+  9 & AVPtest &  & \\
+  8 & AVPtest &  & \\
+  7 & AVPtest &  & \\
+  6 & AVPtest &  & \\
+  5 & AVPtest &  & \\
+  4 & AVPtest &  & \\
   3 & AVPtest &  & \\
   2 & AVPtest &  & \\
-  1 & AVPtest &  & \\
+  1 & AVPtest &  & \\  
   \hline
 \end{tabular}
 \end{small}
-\end{center}
+\end{align*}
 
 %----------------------------------------------------------------------------------------
 %	END OF DOCUMENT
